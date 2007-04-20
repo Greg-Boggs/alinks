@@ -1,5 +1,5 @@
 <?php
-// $Id $
+// $Id$
 
 /**
  * Implementation of hook_install().
@@ -9,11 +9,11 @@ function alinks_install() {
     case 'mysql':
     case 'mysqli':
       db_query("CREATE TABLE {alinks} (
-	id int(10) unsigned NOT NULL auto_increment,
-	text varchar(255) NOT NULL default '',
-	url varchar(255) NOT NULL default '',
-	url_title varchar(255) NOT NULL default '',
-	PRIMARY KEY  (id)
+        id int(10) unsigned NOT NULL auto_increment,
+        text varchar(255) NOT NULL default '',
+        url varchar(255) NOT NULL default '',
+        url_title varchar(255) NOT NULL default '',
+        PRIMARY KEY  (id)
       ) /*!40100 DEFAULT CHARACTER SET UTF8 */ ");
   }
 }
