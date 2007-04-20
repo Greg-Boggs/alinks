@@ -1,0 +1,222 @@
+<?php
+// $Id $
+/**
+ * Implementation of hook_menu().
+ */
+function alinks_menu($may_cache) {
+  $items = array();
+  $admin = user_access('administer site configuration');
+
+  if ($may_cache) {
+/*
+ * This will be used for further development. Untill then I keep it commented out    
+	$items[] = array('path' => 'admin/settings/alinks',
+      'title' => t('Alinks'),
+      'description' => t('Set the prefferences for Alinks module.'),
+	  'callback' => 'drupal_get_form',
+      'callback arguments' => array('alinks_admin_settings'),
+	  'access' => $admin
+    );
+ */
+	$items[] = array('path' => 'admin/build/alinks',
+      'title' => t('Alinks'),
+      'description' => t('Define the alinks you want.'),
+      'callback' => 'alinks_page',
+      'callback arguments' => array('alinks_form'),
+      'access' => $admin
+    );
+  }
+	
+  return $items;
+}
+
+/**
+ * Generate the page that will render the froms for adding and editing Alinks
+ */
+function alinks_page () {
+	$output = drupal_get_form('alinks_add_form');
+	$output .= drupal_get_form('alinks_edit_form');
+	return $output;
+}
+/**
+* Implementation of hook_nodeapi().
+*/
+function alinks_nodeapi(&$node, $op, $teaser, $page) {
+  switch ($op) {
+    case 'view':
+      drupal_add_css(drupal_get_path('module', 'alinks').'/alinks.css');
+	  $words = alinks_get_strings();
+	  if ($words) {
+      	$node->content['body']['#value'] = alinks_make_links($node->content['body']['#value'], $words);
+	  }
+  }
+}
+
+/**
+ * Get the strings we have to replace from the database
+ */
+function alinks_get_strings() {
+	$sql = db_query("SELECT * FROM {alinks}");
+	if (db_num_rows($sql)>0) {
+		$alink = array();
+		while ($alinks = db_fetch_array($sql)) {
+			$alink[$alinks['id']] = $alinks;
+		}
+	}
+	return $alink;
+}
+
+/**
+ * Transform the first instance of any word defined to links
+ */
+function alinks_make_links($body, $words) {
+	if (is_array($words)) {
+		foreach ($words as $word) {
+			$alink_text[] = '/'.$word['text'].'/';
+			$alink_url[] = '<a href="' . check_url($word['url']) . '" class="alinks-link" title="' . check_plain($word['title']) . '">' . check_plain($word['text']) . '</a>';
+    		
+		}
+	$text = preg_replace ($alink_text, $alink_url, $body, 1);
+	}
+	return $text;
+}
+
+/**
+ * Generate the form used to add alinks to drupal
+ */
+function alinks_add_form() {
+	$form['add_alinks'] = array(
+		'#type' => 'fieldset',
+		'#title' => t('Add alink'),
+		'#description' => t('Use this form to add alinks'),
+		'#collapsible' => TRUE,
+		'#collapsed' => FALSE,
+	);
+	$form['add_alinks']['word'] = array(
+		'#type' => 'textfield',
+    	'#title' => t('Word'),
+		'#size' => 30,
+		'#maxlength' => 255,
+    	'#description' => t('The string you want transformed to a link.'),
+		'#required' => TRUE
+    );
+	$form['add_alinks']['url'] = array(
+		'#type' => 'textfield',
+    	'#title' => t('URL'),
+		'#size' => 30,
+		'#maxlength' => 255,
+    	'#description' => t('The url the string will link too.'),
+		'#required' => TRUE
+    );
+	$form['add_alinks']['url_title'] = array(
+		'#type' => 'textfield',
+    	'#title' => t('URL Title'),
+		'#size' => 30,
+		'#maxlength' => 255,
+    	'#description' => t('Title for the url the string will link too. It will be used in the link creation and appear as tooltip when hovering the mouse over the link')
+    );
+    $form['add_alinks']['save'] = array(
+   		'#type' => 'submit',
+    	'#value' => t('Add alink'),
+    );
+  return $form;
+	
+}
+
+/**
+ * Submit the form used to add alinks and insert the data in the db
+ */
+function alinks_add_form_submit($form_id, $form_values) {
+	db_query("INSERT INTO {alinks} (text, url, title) VALUES ('%s', '%s', '%s')", $form_values['word'], $form_values['url'], $form_values['url_title']);
+}
+
+/**
+ * Generate the form used to edit alinks
+ */
+function alinks_edit_form() {
+	$form['edit_alinks'] = array(
+		'#type' => 'fieldset',
+		'#title' => t('Edit alinks'),
+		'#description' => t('Use this form to edit alinks. If you want to delete an entry just select the coresponding checkbox. To edit the entry edit the desired text.'),
+		'#collapsible' => TRUE,
+		'#collapsed' => FALSE,
+	);
+	$sql = db_query("SELECT * FROM {alinks} ORDER BY text");
+	if (db_num_rows($sql) > 0) {
+		$form['edit_alinks']['edit_alink'] = array('#tree' => TRUE);
+		while ($alink = db_fetch_array($sql)) {
+			$alinks[$alink['id']] = $alink;
+			$form['edit_alinks']['edit_alink'][$alink['id']]['word_edit'] = array(
+				'#type' => 'textfield',
+				'#size' => 10,
+				'#maxlength' => 255,
+				'#default_value' => $alink['text'],
+				'#required' => TRUE
+    		);
+			$form['edit_alinks']['edit_alink'][$alink['id']]['url_edit'] = array(
+				'#type' => 'textfield',
+				'#size' => 30,
+				'#maxlength' => 255,
+				'#default_value' => $alink['url'],
+				'#required' => TRUE
+    		);
+			$form['edit_alinks']['edit_alink'][$alink['id']]['url_title_edit'] = array(
+				'#type' => 'textfield',
+				'#size' => 30,
+				'#maxlength' => 255,
+				'#default_value' => $alink['title'],
+				'#required' => TRUE
+    		);
+			$form['edit_alinks']['edit_alink'][$alink['id']]['delete'] = array(
+				'#type' => 'checkbox',
+    		);
+		}
+	
+    	$form['edit_alinks']['save_edit'] = array(
+   			'#type' => 'submit',
+    		'#value' => t('Update alinks'),
+    	);
+		$form['edit_alinks']['alinks'] = array(
+			'#type' => 'value',
+			'#value' => $alinks
+		);
+		$form['edit_alinks']['#theme'] = 'alinks_list';
+	}
+  return $form;
+	
+}
+
+/**
+ * Theme function for the list of alinks
+ */
+function theme_alinks_list($form) {
+	$header = array(t('String'), t('URL'), t('URL title'), t('Delete'));
+	
+	$rows = array();
+	foreach($form['alinks']['#value'] as $id=>$alink) {
+		$row = array();
+		$row[] = array('data' => drupal_render($form['edit_alink'][$alink['id']]['word_edit']), 'align' => 'left');
+		$row[] = array('data' => drupal_render($form['edit_alink'][$alink['id']]['url_edit']), 'align' => 'left');
+		$row[] = array('data' => drupal_render($form['edit_alink'][$alink['id']]['url_title_edit']), 'align' => 'left');
+		$row[] = array('data' => drupal_render($form['edit_alink'][$alink['id']]['delete']), 'align' => 'center');
+		$rows[] = $row;
+	}
+	$output = theme('table', $header, $rows);
+	$output .= drupal_render($form);
+	
+	return $output;
+}
+
+/**
+ * Process the edit alinks form
+ */
+function alinks_edit_form_submit($form_id, $form_values) {
+	foreach ($form_values['edit_alink'] as $id => $alink) {
+		if ($alink['delete']) {
+			db_query("DELETE FROM {alinks} WHERE id = %d", $id);
+		}
+		else {
+			db_query("UPDATE {alinks} SET text = '%s', url = '%s', title = '%s' WHERE id = %d", $alink['word_edit'], $alink['url_edit'], $alink['url_title_edit'], $id);
+		}
+	}
+}
