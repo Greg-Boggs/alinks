@@ -10,8 +10,8 @@ function alinks_install() {
     case 'mysqli':
       db_query("CREATE TABLE {alinks} (
         id int(10) unsigned NOT NULL auto_increment,
-        text varchar(255) NOT NULL default '',
-        url varchar(255) NOT NULL default '',
+        alink_text varchar(255) NOT NULL default '',
+        alink_url varchar(255) NOT NULL default '',
         url_title varchar(255) NOT NULL default '',
         PRIMARY KEY  (id)
       ) /*!40100 DEFAULT CHARACTER SET UTF8 */ ");
