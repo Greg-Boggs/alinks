@@ -1,0 +1,122 @@
+# $Id$
+# -----------------------------------------------------------------------------
+# Japanese translation of Drupal (alinks.module)
+#
+# Copyright (c) 2006-2007  Drupal Japan  ( http://drupal.jp/ )  /
+#                          Drupal Nippon ( http://drupon.org/ ) /
+#                          Takafumi      ( jp.drupal@imagine **reverse order**)
+#
+# Generated from file:
+#  alinks.module,v 1.4 2007/04/20 21:28:16 tic2000
+#
+# -----------------------------------------------------------------------------
+msgid ""
+msgstr ""
+"POT-Creation-Date: 2007-04-21 14:04+0900\n"
+"Last-Translator: Takafumi <jp.drupal@imagine **reverse order**>\n"
+"Language-Team: Drupal Japan / Drupal Nippon\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n!=1);\n"
+
+#: alinks.module:13
+msgid "Set the prefferences for Alinks module."
+msgstr "Alinksモジュールの設定を行います。"
+
+#: alinks.module:20
+msgid "Define the alinks you want."
+msgstr "Alinksを定義します。"
+
+#: alinks.module:36
+msgid "Alinks Settings"
+msgstr "Alinksの設定"
+
+#: alinks.module:41;48
+msgid "Alinks node types"
+msgstr "Alinksノードタイプ"
+
+#: alinks.module:42
+msgid "Choose the node types alinks will act upon"
+msgstr "Alinksを作用させるコンテンツタイプを選んでください。"
+
+#: alinks.module:49
+msgid "Select node types"
+msgstr "コンテンツタイプを選択"
+
+#: alinks.module:57
+msgid "Alinks limit"
+msgstr "Alinksの制限"
+
+#: alinks.module:58
+msgid "Set the maxium instances an alink can replace. Use -1 if you want all instances to be replaced."
+msgstr "リンクに変換する最大インスタンス（文字列）数を入力してください。 すべてのインスタンスを変換したい場合は <b>-1</b> を入力してください。"
+
+#: alinks.module:133;163
+msgid "Add alink"
+msgstr "Alinkの追加"
+
+#: alinks.module:134
+msgid "Use this form to add alinks"
+msgstr "以下のフォームでAlinksを追加してください。"
+
+#: alinks.module:140
+msgid "Word"
+msgstr "ワード"
+
+#: alinks.module:143
+msgid "The string you want transformed to a link. The string is case sensitive."
+msgstr "リンクに変換したい文字列を入力してください。 大文字と小文字は区別されます。"
+
+#: alinks.module:148;239
+#msgid "URL"
+#msgstr "URL"
+
+#: alinks.module:151
+msgid "The url the string will link too."
+msgstr "文字列がリンクされるURLを入力してください。"
+
+#: alinks.module:156
+msgid "URL Title"
+msgstr "URLタイトル"
+
+#: alinks.module:159
+msgid "Title for the url the string will link too. It will be used in the link creation and appear as tooltip when hovering the mouse over the link"
+msgstr "リンクのタイトルを入力してください。 これは、リンクの作成に使用され、マウスオーバーの際にツールチップとして表示されます。"
+
+#: alinks.module:184
+msgid "Edit alinks"
+msgstr "Alinkの編集"
+
+#: alinks.module:185
+msgid "Use this form to edit alinks. If you want to delete an entry just select the coresponding checkbox. To edit the entry edit the desired text."
+msgstr "以下のフォームでAlinksを編集してください。 項目を削除したい場合は「削除」ボックスにチェックを入れ、編集したい場合はフィールド内のテキストを編集してください。"
+
+#: alinks.module:222
+msgid "Update alinks"
+msgstr "Alinkの更新"
+
+#: alinks.module:239
+#msgid "String"
+#msgstr "文字列"
+
+#: alinks.module:239
+msgid "URL title"
+msgstr "URLタイトル"
+
+#: alinks.module:239
+#msgid "Delete"
+#msgstr "削除"
+
+#: alinks.info:0
+msgid "Allows users to associates defined text to links."
+msgstr "定義済のテキストをリンクに関連付けられるようにします。"
+
+#: alinks.info:0
+msgid "alinks"
+msgstr "alinks"
+
+#: alinks.module:12;19 alinks.info:0
+msgid "Alinks"
+msgstr "Alinks"
+
