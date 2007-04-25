@@ -107,25 +107,44 @@ function alinks_get_strings() {
  */
 function alinks_make_links($body, $words) {
 
+  // do we have alinks?
   if (is_array($words)) {
+    // create the replacement array
     foreach ($words as $word) {
       $alink_text[] = '/\b'.$word['alink_text'].'\b/';
       $alink_url[] = '<a href="' . check_url($word['alink_url']) . '" class="alinks-link" title="' . check_plain($word['url_title']) . '">' . check_plain($word['alink_text']) . '</a>';	
     }
+    // we get out the already existing links
+    preg_match_all('/\<a\s.*?\>(.*?)\<\/a\>/', $body, $linka);
+    $i=0;
+    $replacement = array();
+    // create the replacement array
+    foreach($linka[0] as $key => $values) {
+      $replacement[] = '<!--alink_delimiter_'.$i.'-->';
+      $i++;
+    }
+    // replace the links with the replacement text
+    $body = str_replace($linka[0], $replacement, $body);
+    // we get all the text that is not inside a html tag
+    // from the modified text
     preg_match_all('/\>(.*?)\</', $body, $output);
     $output[0] = array_unique($output[0]);
     $output[1] = array_unique($output[1]);
+    // transform the result array to a string so we can use the limit argument
     $text = implode('<!--alink_delimiter-->', $output[1]);
     $limit = variable_get('alinks_limit', 1);
+    // make the actual replacement
     if ($limit == -1) {
       $output[1] = preg_replace($alink_text, $alink_url, $text);
     }
     else {
       $output[1] = preg_replace($alink_text, $alink_url, $text, $limit);
     }
+    // rebuild the array
     $output[1] = explode('<!--alink_delimiter-->', $output[1]);
     $our_output = array();
     $i=0;
+    // we make sure the text will pe replaced outside any tag
     foreach($output[1] as $key => $values) {
       if (!$values) {
         $our_output[$i] = '><';
@@ -135,7 +154,10 @@ function alinks_make_links($body, $words) {
       }
       $i++;
     }
+    // insert the new text in the full text
     $text = str_replace($output[0], $our_output, $body);
+    // and we finally put back the links in the text
+    $text = str_replace($replacement, $linka[0], $body);
   }
   return $text;
 }
