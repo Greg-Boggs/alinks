@@ -114,6 +114,10 @@ function alinks_make_links($body, $words) {
       $alink_text[] = '/\b'.$word['alink_text'].'\b/';
       $alink_url[] = '<a href="' . check_url($word['alink_url']) . '" class="alinks-link" title="' . check_plain($word['url_title']) . '">' . check_plain($word['alink_text']) . '</a>';	
     }
+    // we replace new lines with a temporary delimiter
+    $carriage  = array("\r\n", "\n", "\r");
+	$carriage_replacement = array("<!--cariage_replacement_rn-->", "<!--cariage_replacement_n-->", "<!--cariage_replacement_r-->");
+	$body = str_replace($carriage, $carriage_replacement, $body);
     // we get out the already existing links
     preg_match_all('/\<a\s.*?\>(.*?)\<\/a\>/', $body, $linka);
     $i=0;
@@ -156,8 +160,10 @@ function alinks_make_links($body, $words) {
     }
     // insert the new text in the full text
     $text = str_replace($output[0], $our_output, $body);
-    // and we finally put back the links in the text
-    $text = str_replace($replacement, $linka[0], $body);
+    // and put back the links in the text
+    $text = str_replace($replacement, $linka[0], $text);
+    // and finaly put back the new lines
+    $text = str_replace($carriage_replacement, $carriage, $text);
   }
   return $text;
 }
