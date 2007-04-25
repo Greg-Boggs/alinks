@@ -109,16 +109,33 @@ function alinks_make_links($body, $words) {
 
   if (is_array($words)) {
     foreach ($words as $word) {
-      $alink_text[] = '/'.$word['alink_text'].'/';
+      $alink_text[] = '/\b'.$word['alink_text'].'\b/';
       $alink_url[] = '<a href="' . check_url($word['alink_url']) . '" class="alinks-link" title="' . check_plain($word['url_title']) . '">' . check_plain($word['alink_text']) . '</a>';	
     }
+    preg_match_all('/\>(.*?)\</', $body, $output);
+    $output[0] = array_unique($output[0]);
+    $output[1] = array_unique($output[1]);
+    $text = implode('<!--alink_delimiter-->', $output[1]);
     $limit = variable_get('alinks_limit', 1);
     if ($limit == -1) {
-      $text = preg_replace($alink_text, $alink_url, $body);
+      $output[1] = preg_replace($alink_text, $alink_url, $text);
     }
     else {
-      $text = preg_replace($alink_text, $alink_url, $body, $limit);
+      $output[1] = preg_replace($alink_text, $alink_url, $text, $limit);
     }
+    $output[1] = explode('<!--alink_delimiter-->', $output[1]);
+    $our_output = array();
+    $i=0;
+    foreach($output[1] as $key => $values) {
+      if (!$values) {
+        $our_output[$i] = '><';
+      }
+      else {
+        $our_output[$i] = str_replace($values, '>'.$values.'<', $values);
+      }
+      $i++;
+    }
+    $text = str_replace($output[0], $our_output, $body);
   }
   return $text;
 }
