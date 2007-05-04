@@ -10,10 +10,22 @@ function alinks_install() {
     case 'mysqli':
       db_query("CREATE TABLE {alinks} (
         id int(10) unsigned NOT NULL auto_increment,
+        alink_start_boundary INT(1) NOT NULL DEFAULT '0',
         alink_text varchar(255) NOT NULL default '',
+        alink_end_boundary INT(1) NOT NULL DEFAULT '0',
         alink_url varchar(255) NOT NULL default '',
         url_title varchar(255) NOT NULL default '',
         PRIMARY KEY  (id)
       ) /*!40100 DEFAULT CHARACTER SET UTF8 */ ");
   }
+}
+
+function alinks_uninstall() {
+  db_query("DROP TABLE IF EXISTS {alinks}");
+}
+
+function alinks_update_1() {
+  $ret = array();
+  db_add_column($ret, 'alinks', 'alink_start_boundary', 'int(1)', array('default' => 0));
+  db_add_column($ret, 'alinks', 'alink_end_boundary', 'int(1)', array('default' => 0));
 }

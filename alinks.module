@@ -111,12 +111,16 @@ function alinks_make_links($body, $words) {
   if (is_array($words)) {
     // create the replacement array
     foreach ($words as $word) {
-      $alink_text[] = '/\b'.$word['alink_text'].'\b/';
-      $alink_url[] = '<a href="' . check_url($word['alink_url']) . '" class="alinks-link" title="' . check_plain($word['url_title']) . '">' . check_plain($word['alink_text']) . '</a>';	
+      $alink_start_boundary = ($word['alink_start_boundary'] == 1) ? 'B' : 'b';
+      $alink_end_boundary = ($word['alink_end_boundary'] == 1) ? 'B' : 'b';
+      $word['alink_text'] = htmlspecialchars($word['alink_text']);
+      $alink_text[] = '$\\' . $alink_start_boundary . preg_quote($word['alink_text'], '$') . '\\' . $alink_end_boundary . '$';
+      $alink_url[] = '<a href="' . check_url($word['alink_url']) . '" class="alinks-link" title="' . check_plain($word['url_title']) . '">' . check_plain(str_replace('$', '\$', $word['alink_text'])) . '</a>';	
     }
+    $alink_url = str_replace(array('&amp;amp;', '&amp;lt;', '&amp;gt;'), array('&amp;', '&lt;', '&gt;'), $alink_url);
     // we replace new lines with a temporary delimiter
     $carriage  = array("\r\n", "\n", "\r");
-	$carriage_replacement = array("<!--cariage_replacement_rn-->", "<!--cariage_replacement_n-->", "<!--cariage_replacement_r-->");
+	$carriage_replacement = array(" cariage_replacement_rn ", " cariage_replacement_n ", " cariage_replacement_r ");
 	$body = str_replace($carriage, $carriage_replacement, $body);
     // we get out the already existing links
     preg_match_all('/\<a\s.*?\>(.*?)\<\/a\>/', $body, $linka);
@@ -124,7 +128,7 @@ function alinks_make_links($body, $words) {
     $replacement = array();
     // create the replacement array
     foreach($linka[0] as $key => $values) {
-      $replacement[] = '<!--alink_delimiter_'.$i.'-->';
+      $replacement[] = ' alink_delimiter_'.$i.' ';
       $i++;
     }
     // replace the links with the replacement text
@@ -135,7 +139,7 @@ function alinks_make_links($body, $words) {
     $output[0] = array_unique($output[0]);
     $output[1] = array_unique($output[1]);
     // transform the result array to a string so we can use the limit argument
-    $text = implode('<!--alink_delimiter-->', $output[1]);
+    $text = implode(' alink_delimiter_one_string ', $output[1]);
     $limit = variable_get('alinks_limit', 1);
     // make the actual replacement
     if ($limit == -1) {
@@ -145,7 +149,7 @@ function alinks_make_links($body, $words) {
       $output[1] = preg_replace($alink_text, $alink_url, $text, $limit);
     }
     // rebuild the array
-    $output[1] = explode('<!--alink_delimiter-->', $output[1]);
+    $output[1] = explode(' alink_delimiter_one_string ', $output[1]);
     $our_output = array();
     $i=0;
     // we make sure the text will pe replaced outside any tag
@@ -180,6 +184,11 @@ function alinks_add_form() {
     '#collapsible' => TRUE,
     '#collapsed' => FALSE,
   );
+  $form['alinks_add_form']['start_boundary'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Start Boundary'),
+    '#description' => t('Enable if the string doesn\'t begin with an alphanumeric or underscore character.'),
+  );
   $form['alinks_add_form']['word'] = array(
     '#type' => 'textfield',
     '#title' => t('Word'),
@@ -187,6 +196,11 @@ function alinks_add_form() {
     '#maxlength' => 255,
     '#description' => t('The string you want transformed to a link. The string is case sensitive.'),
     '#required' => TRUE
+  );  
+  $form['alinks_add_form']['end_boundary'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('End Boundary'),
+    '#description' => t('Enable if the string doesn\'t end with an alphanumeric or underscore character.'),
   );
   $form['alinks_add_form']['url'] = array(
     '#type' => 'textfield',
@@ -216,7 +230,7 @@ function alinks_add_form() {
  */
 function alinks_add_form_submit($form_id, $form_values) {
 
-  db_query("INSERT INTO {alinks} (alink_text, alink_url, url_title) VALUES ('%s', '%s', '%s')", $form_values['word'], $form_values['url'], $form_values['url_title']);
+  db_query("INSERT INTO {alinks} (alink_start_boundary, alink_text, alink_end_boundary, alink_url, url_title) VALUES (%d, '%s', %d, '%s', '%s')", $form_values['start_boundary'], $form_values['word'], $form_values['end_boundary'], $form_values['url'], $form_values['url_title']);
 }
 
 /**
@@ -236,26 +250,33 @@ function alinks_edit_form() {
       $form['alinks_edit_form']['edit_alink'] = array('#tree' => TRUE);
       while ($alink = db_fetch_array($sql)) {
         $alinks[$alink['id']] = $alink;
+        $form['alinks_edit_form']['edit_alink'][$alink['id']]['start_boundary_edit'] = array(
+          '#type' => 'checkbox',
+          '#default_value' => $alink['alink_start_boundary'],
+        );
         $form['alinks_edit_form']['edit_alink'][$alink['id']]['word_edit'] = array(
           '#type' => 'textfield',
           '#size' => 10,
           '#maxlength' => 255,
           '#default_value' => $alink['alink_text'],
-          '#required' => TRUE
+          '#required' => TRUE,
+        );
+        $form['alinks_edit_form']['edit_alink'][$alink['id']]['end_boundary_edit'] = array(
+          '#type' => 'checkbox',
+          '#default_value' => $alink['alink_end_boundary'],
         );
         $form['alinks_edit_form']['edit_alink'][$alink['id']]['url_edit'] = array(
           '#type' => 'textfield',
           '#size' => 30,
           '#maxlength' => 255,
           '#default_value' => $alink['alink_url'],
-          '#required' => TRUE
+          '#required' => TRUE,
         );
         $form['alinks_edit_form']['edit_alink'][$alink['id']]['url_title_edit'] = array(
           '#type' => 'textfield',
           '#size' => 30,
           '#maxlength' => 255,
           '#default_value' => $alink['url_title'],
-          '#required' => TRUE
         );
         $form['alinks_edit_form']['edit_alink'][$alink['id']]['delete'] = array(
           '#type' => 'checkbox',
@@ -281,12 +302,14 @@ function alinks_edit_form() {
  */
 function theme_alinks_list($form) {
 
-  $header = array(t('String'), t('URL'), t('URL title'), t('Delete'));
+  $header = array(t('Start<br />Boundary'), t('String'), t('End<br />Boundary'), t('URL'), t('URL title'), t('Delete'));
 
   $rows = array();
   foreach($form['alinks']['#value'] as $id=>$alink) {
     $row = array();
+    $row[] = array('data' => drupal_render($form['edit_alink'][$alink['id']]['start_boundary_edit']), 'align' => 'center');
     $row[] = array('data' => drupal_render($form['edit_alink'][$alink['id']]['word_edit']), 'align' => 'left');
+    $row[] = array('data' => drupal_render($form['edit_alink'][$alink['id']]['end_boundary_edit']), 'align' => 'center');
     $row[] = array('data' => drupal_render($form['edit_alink'][$alink['id']]['url_edit']), 'align' => 'left');
     $row[] = array('data' => drupal_render($form['edit_alink'][$alink['id']]['url_title_edit']), 'align' => 'left');
     $row[] = array('data' => drupal_render($form['edit_alink'][$alink['id']]['delete']), 'align' => 'center');
@@ -308,7 +331,7 @@ function alinks_edit_form_submit($form_id, $form_values) {
       db_query("DELETE FROM {alinks} WHERE id = %d", $id);
     }
     else {
-      db_query("UPDATE {alinks} SET alink_text = '%s', alink_url = '%s', url_title = '%s' WHERE id = %d", $alink['word_edit'], $alink['url_edit'], $alink['url_title_edit'], $id);
+      db_query("UPDATE {alinks} SET alink_start_boundary = %d, alink_text = '%s', alink_end_boundary = %d, alink_url = '%s', url_title = '%s' WHERE id = %d", $alink['start_boundary_edit'], $alink['word_edit'], $alink['end_boundary_edit'], $alink['url_edit'], $alink['url_title_edit'], $id);
     }
   }
 }
