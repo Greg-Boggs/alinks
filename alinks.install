@@ -37,4 +37,5 @@ function alinks_update_1() {
       $ret[] = update_sql("ALTER TABLE {alinks} ADD COLUMN alink_end_boundary TINYINT(1) NOT NULL DEFAULT 0 AFTER alink_text");
       break;
   }
+  return $ret;
 }
