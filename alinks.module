@@ -1,29 +1,36 @@
 <?php
 // $Id$
 /**
+ * Implementation of hook_perm().
+ */
+function alinks_perm() {
+  return array('edit alinks');
+}
+
+/**
  * Implementation of hook_menu().
  */
 function alinks_menu($may_cache) {
   $items = array();
   $admin = user_access('administer site configuration');
+  $editor = user_access('edit alinks');
 
   if ($may_cache) {
     $items[] = array('path' => 'admin/settings/alinks',
       'title' => t('Alinks'),
-      'description' => t('Set the prefferences for Alinks module.'),
+      'description' => t('Set the preferences for Alinks module.'),
       'callback' => 'drupal_get_form',
       'callback arguments' => array('alinks_admin_settings'),
-      'access' => $admin
+      'access' => $admin,
     );
     $items[] = array('path' => 'admin/build/alinks',
       'title' => t('Alinks'),
-      'description' => t('Define the alinks you want.'),
+      'description' => t('Define & edit alinks'),
       'callback' => 'alinks_page',
       'callback arguments' => array('alinks_form'),
-      'access' => $admin
+      'access' => $editor,
     );
   }
-	
   return $items;
 }
 
@@ -39,7 +46,7 @@ function alinks_admin_settings() {
   $form['alinks_settings']['alinks_node_types'] = array(
     '#type' => 'fieldset',
     '#title' => t('Alinks node types'),
-    '#description' => t('Choose the node types alinks will act upon'),
+    '#description' => t('Choose the node types into which alinks will automatically insert links.'),
     '#collapsible' => TRUE,
     '#collapsed' => TRUE,
   );
@@ -55,7 +62,7 @@ function alinks_admin_settings() {
     '#size' => 5,
     '#maxlenghth' => 3,
     '#title' => t('Alinks limit'),
-    '#description' => t('Set the maxium instances an alink can replace. Use -1 if you want all instances to be replaced.'),
+    '#description' => t('Set the maxium instances an alink can replace. Use -1 if you want all instances in the node to be replaced.'),
     '#default_value' => variable_get('alinks_limit', 1),
   );
   
@@ -191,10 +198,10 @@ function alinks_add_form() {
   );
   $form['alinks_add_form']['word'] = array(
     '#type' => 'textfield',
-    '#title' => t('Word'),
+    '#title' => t('Word/Phrase'),
     '#size' => 30,
     '#maxlength' => 255,
-    '#description' => t('The string you want transformed to a link. The string is case sensitive.'),
+    '#description' => t('The word or phrase you wish to convert to a link. This field is case sensitive.'),
     '#required' => TRUE
   );  
   $form['alinks_add_form']['end_boundary'] = array(
@@ -207,7 +214,7 @@ function alinks_add_form() {
     '#title' => t('URL'),
     '#size' => 30,
     '#maxlength' => 255,
-    '#description' => t('The url the string will link too.'),
+    '#description' => t('The URL of the page to link to. Internal (Drupal) links take the form "my/page", from the full URL of "example.com/my/page".'),
     '#required' => TRUE
   );
   $form['alinks_add_form']['url_title'] = array(
@@ -215,7 +222,7 @@ function alinks_add_form() {
     '#title' => t('URL Title'),
     '#size' => 30,
     '#maxlength' => 255,
-    '#description' => t('Title for the url the string will link too. It will be used in the link creation and appear as tooltip when hovering the mouse over the link')
+    '#description' => t('Title for the above URL. It will be embedded in the created link and appear as a tooltip when hovering the mouse over the link.')
   );
   $form['alinks_add_form']['save'] = array(
     '#type' => 'submit',
@@ -241,7 +248,7 @@ function alinks_edit_form() {
   $form['alinks_edit_form'] = array(
     '#type' => 'fieldset',
     '#title' => t('Edit alinks'),
-    '#description' => t('Use this form to edit alinks. If you want to delete an entry just select the coresponding checkbox. To edit the entry edit the desired text.'),
+    '#description' => t('Use this form to edit alinks. If you want to delete an entry, just select the corresponding checkbox. To edit the entry, edit the desired text. Click update to confirm any changes.'),
     '#collapsible' => TRUE,
     '#collapsed' => TRUE,
   );
