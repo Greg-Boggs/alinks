@@ -39,3 +39,17 @@ function alinks_update_1() {
   }
   return $ret;
 }
+
+function alinks_update_2() {
+  $ret = array();
+  switch ($GLOBALS['db_type']) {
+    case 'pgsql':
+      db_add_column($ret, 'alinks', 'alink_case_insensitive', 'TINYINT(1)', array('DEFAULT' => 0));
+      break;
+    case 'mysql':
+    case 'mysqli':
+      $ret[] = update_sql("ALTER TABLE {alinks} ADD COLUMN alink_case_insensitive TINYINT(1) NOT NULL DEFAULT 0 AFTER alink_end_boundary");
+      break;
+  }
+  return $ret;
+}
