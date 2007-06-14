@@ -22,6 +22,8 @@ function alinks_install() {
 
 function alinks_uninstall() {
   db_query("DROP TABLE IF EXISTS {alinks}");
+  variable_del('alinks_node_types');
+  variable_del('alinks_limit');
 }
 
 function alinks_update_1() {
