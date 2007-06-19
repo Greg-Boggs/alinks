@@ -153,7 +153,7 @@ function alinks_make_links($body, $words) {
         $alink_external = ($word['alink_external'] == 1) ? ' rel="external"' : '';
         $word['alink_text'] = htmlspecialchars($word['alink_text']);
         $alink_text[] = '$\\' . $alink_start_boundary . '(' . preg_quote($word['alink_text'], '$') . ')\\' . $alink_end_boundary . '$' . $alink_case_insensivity;
-        $alink_url[] = '<a href="alink_check' . check_url($word['alink_url']) . 'alink_check" class="alink_check'.str_replace(' ', 'alink_space', $word['alink_class']).'alink_check" title="alink_check' . str_replace(' ', 'alink_space', check_plain($word['url_title'])) . 'alink_check"'.$alink_external.'>alink_check\1alink_check</a>';
+        $alink_url[] = '<a href="alink_check' . base_path() . check_url($word['alink_url']) . 'alink_check" class="alink_check'.str_replace(' ', 'alink_space', $word['alink_class']).'alink_check" title="alink_check' . str_replace(' ', 'alink_space', check_plain($word['url_title'])) . 'alink_check"'.$alink_external.'>alink_check\1alink_check</a>';
       }	
     }
     $alink_url = str_replace(array('&amp;amp;', '&amp;lt;', '&amp;gt;'), array('&amp;', '&lt;', '&gt;'), $alink_url);
