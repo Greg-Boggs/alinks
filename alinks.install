@@ -5,30 +5,86 @@
  * Implementation of hook_install().
  */
 function alinks_install() {
-  switch ($GLOBALS['db_type']) {
-    case 'mysql':
-    case 'mysqli':
-      db_query("CREATE TABLE {alinks} (
-        id INT(10) unsigned NOT NULL auto_increment,
-        alink_start_boundary TINYINT(1) NOT NULL DEFAULT '0',
-        alink_text varchar(255) NOT NULL default '',
-        alink_end_boundary TINYINT(1) NOT NULL DEFAULT '0',
-        alink_case_insensitive TINYINT(1) NOT NULL DEFAULT '0',
-        alink_url varchar(255) NOT NULL default '',
-        url_title varchar(255) NOT NULL default '',
-        alink_external TINYINT(1) NOT NULL DEFAULT '0',
-        alink_class varchar(255) NOT NULL default 'alinks-link',
-        alink_weight INT(3) NOT NULL DEFAULT '0',
-        PRIMARY KEY  (id)
-      ) /*!40100 DEFAULT CHARACTER SET UTF8 */ ");
-  }
+// Create tables.
+  drupal_install_schema('alinks');
 }
 
 function alinks_uninstall() {
-  db_query("DROP TABLE IF EXISTS {alinks}");
+  drupal_uninstall_schema('alinks');
   variable_del('alinks_node_types');
   variable_del('alinks_limit');
 }
+
+/**
+ * Implementation of hook_schema().
+ */
+function alinks_schema() {
+  $schema['alinks'] = array(
+    'fields' => array(//fields开始
+      'id' => array(
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'alink_start_boundary' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+        'size' => 'tiny',
+      ),
+      'alink_text' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'alink_end_boundary' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+        'size' => 'tiny',
+      ),
+      'alink_case_insensitive' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+        'size' => 'tiny',
+      ),
+      'alink_url' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'url_title' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+     'alink_external' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+        'size' => 'tiny',
+      ),
+      'alink_class' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => 'alinks-link',
+      ),
+      'alink_weight' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+    ),//fields结束
+    'primary key' => array('id'),
+  );
+  return $schema;
+}
+
 
 function alinks_update_1() {
   $ret = array();
