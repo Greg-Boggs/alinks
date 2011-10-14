@@ -1,15 +1,11 @@
 <?php
 
 /**
- * Implementation of hook_install().
+ * @file
+ * Install, update and uninstall functions for the Alinks module.
  */
-function alinks_install() {
-// Create tables.
-  drupal_install_schema('alinks');
-}
 
 function alinks_uninstall() {
-  drupal_uninstall_schema('alinks');
   variable_del('alinks_node_types');
   variable_del('alinks_limit');
 }

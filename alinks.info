@@ -1,10 +1,4 @@
 name = Alinks
 description = Allows users to associates defined text to links.
-core = 6.x
-
-; Information added by drupal.org packaging script on 2008-08-28
-version = "6.4-1.0-rc1"
-core = "6.x"
-project = "alinks"
-datestamp = "1219932944"
+core = 7.x
 

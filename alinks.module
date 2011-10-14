@@ -13,7 +13,7 @@ function alinks_perm() {
 function alinks_theme() {
   return array(
     'alinks_list' => array(
-      'arguments' => array('form' => NULL)
+      'render element' => 'form'
     )
   );
 }
@@ -25,14 +25,14 @@ function alinks_menu() {
   $admin = array('administer site configuration');
   $editor = array('edit alinks');
 
-    $items['admin/settings/alinks'] = array(
+    $items['admin/config/alinks'] = array(
       'title' => t('Alinks'),
       'description' => t('Set the preferences for Alinks module.'),
       'page callback' => 'drupal_get_form',
       'page arguments' => array('alinks_admin_settings'),
       'access arguments' => $admin,
     );
-    $items['admin/build/alinks'] = array(
+    $items['admin/structure/alinks'] = array(
       'title' => t('Alinks'),
       'description' => t('Define & edit alinks'),
       'page callback' => 'drupal_get_form',
@@ -40,7 +40,7 @@ function alinks_menu() {
       'access arguments' => $editor,
       'type' => MENU_NORMAL_ITEM,
     );
-    $items['admin/build/alinks/add'] = array(
+    $items['admin/structure/alinks/add'] = array(
       'title' => t('Add Alink'),
       'description' => t('Add alink'),
       'page callback' => 'drupal_get_form',
@@ -48,7 +48,7 @@ function alinks_menu() {
       'access arguments' => $editor,
       'type' => MENU_DEFAULT_LOCAL_TASK,
     );
-    $items['admin/build/alinks/edit'] = array(
+    $items['admin/structure/alinks/edit'] = array(
       'title' => t('Edit Alinks'),
       'description' => t('Edit alinks'),
       'page callback' => 'drupal_get_form',
@@ -69,6 +69,14 @@ $(function(){
  * Generate the form for the settings page
  */
 function alinks_admin_settings() {
+	
+  // Get node types and create array for options field
+  $types = node_type_get_types();
+  $types_options = array();
+  foreach ($types as $k => $v) {
+    $types_options[$k] = $v->name;
+  }
+	
   $form['alinks_settings'] = array(
     '#type' => 'fieldset',
     '#title' => t('Alinks Settings'),
@@ -85,7 +93,7 @@ function alinks_admin_settings() {
     '#type' => 'checkboxes',
     '#title' => t('Alinks node types'),
     '#description' => t('Select node types'),
-    '#options' => node_get_types('names'),
+    '#options' => $types_options,
     '#default_value' => variable_get('alinks_node_types', array()),
   );
   $form['alinks_settings']['alinks_limit'] = array(
@@ -109,26 +117,21 @@ function alinks_page () {
   return $output;
 }
 /**
-* Implementation of hook_nodeapi().
+* Implementation of hook_node_view().
 */
-function alinks_nodeapi(&$node, $op, $teaser, $page) {
-  
-	switch ($op) {
-    case 'view':
-    	
+function alinks_node_view($node, $view_mode, $langcode) {
+
       $node_types = in_array($node->type, variable_get('alinks_node_types', array()), TRUE);
       
       if ($node_types) {
-        drupal_add_css(drupal_get_path('module', 'alinks').'/alinks.css');
+        drupal_add_css(drupal_get_path('module', 'alinks') . '/alinks.css');
         $words = alinks_get_strings();
        
         if ($words) {
-        	
-      	  $node->content['body']['#value'] = alinks_make_links($node->content['body']['#value'], $words);
-	    }
+          $node->content['body'][0]['#markup'] = alinks_make_links($node->content['body'][0]['#markup'], $words);
+        }
       }
-      break;
-  }
+
 }
 
 /**
@@ -137,11 +140,11 @@ function alinks_nodeapi(&$node, $op, $teaser, $page) {
 function alinks_get_strings() {
   $sql = db_query("SELECT * FROM {alinks} ORDER BY alink_weight");
   
-  if (count(db_fetch_array($sql))>0) {
+  if ($sql->rowCount()>0) {
   	$sql = db_query("SELECT * FROM {alinks} ORDER BY alink_weight");
     $alink = array();
-    while ($alinks = db_fetch_array($sql)) {
-      $alink[$alinks['id']] = $alinks;
+    foreach ($sql as $alinks) {
+      $alink[$alinks->id] = $alinks;
     }
   }
   return $alink;
@@ -162,19 +165,19 @@ function alinks_make_links($body, $words) {
     $links_chars_replace = array('alink_slash', 'alink_minus');
     foreach ($words as $word) {
     	
-      if ($word['alink_url'] != $url) {
-        $alink_start_boundary = ($word['alink_start_boundary'] == 1) ? 'B' : 'b';
-        $alink_end_boundary = ($word['alink_end_boundary'] == 1) ? 'B' : 'b';
-        $alink_case_insensivity = ($word['alink_case_insensitive'] == 1) ? 'i' : '';
-        $word['alink_text'] = htmlspecialchars($word['alink_text']);
-        $alink_text[] = '$\\' . $alink_start_boundary . '(' . preg_quote($word['alink_text'], '$') . ')\\' . $alink_end_boundary . '$' . $alink_case_insensivity;
-        if ($word['alink_external'] == 1) {
+      if ($word->alink_url != $url) {
+        $alink_start_boundary = ($word->alink_start_boundary == 1) ? 'B' : 'b';
+        $alink_end_boundary = ($word->alink_end_boundary == 1) ? 'B' : 'b';
+        $alink_case_insensivity = ($word->alink_case_insensitive == 1) ? 'i' : '';
+        $word->alink_text = htmlspecialchars($word->alink_text);
+        $alink_text[] = '$\\' . $alink_start_boundary . '(' . preg_quote($word->alink_text, '$') . ')\\' . $alink_end_boundary . '$' . $alink_case_insensivity;
+        if ($word->alink_external == 1) {
         	//print_r(str_replace($links_chars, $links_chars_replace, $word['alink_url']));exit;
           $alink_url[] = l('alink_check\1alink_check', 
-                           str_replace($links_chars, $links_chars_replace, $word['alink_url']) . 'alink_check', 
+                           str_replace($links_chars, $links_chars_replace, $word->alink_url) . 'alink_check', 
                            array(
-	                           'attributes' =>array('class' => 'alink_check'.str_replace(' ', 'alink_space', $word['alink_class']).'alink_check', 
-		                                            'title' => 'alink_check' . str_replace(' ', 'alink_space', check_plain($word['url_title'])) . 'alink_check'),
+	                           'attributes' =>array('class' => 'alink_check'.str_replace(' ', 'alink_space', $word->alink_class).'alink_check', 
+		                                            'title' => 'alink_check' . str_replace(' ', 'alink_space', check_plain($word->url_title)) . 'alink_check'),
 		                          
 		                       'absolute' => true
 	                       )
@@ -182,10 +185,10 @@ function alinks_make_links($body, $words) {
         }
         else {
           $alink_url[] = l('alink_check\1alink_check', 
-                            'alink_check' . str_replace('/', 'alink_slash', $word['alink_url']) . 'alink_check', 
+                            'alink_check' . str_replace('/', 'alink_slash', $word->alink_url) . 'alink_check', 
                             array(
-                           'attributes' =>array('class' => 'alink_check'.str_replace(' ', 'alink_space', $word['alink_class']).'alink_check', 
-                                                'title' => 'alink_check' . str_replace(' ', 'alink_space', check_plain($word['url_title'])) . 'alink_check'
+                           'attributes' =>array('class' => 'alink_check'.str_replace(' ', 'alink_space', $word->alink_class).'alink_check', 
+                                                'title' => 'alink_check' . str_replace(' ', 'alink_space', check_plain($word->url_title)) . 'alink_check'
                                                )
                                   )
                           )/*'<a href="alink_check' . base_path() . check_url($word['alink_url']) . 'alink_check" class="alink_check'.str_replace(' ', 'alink_space', $word['alink_class']).'alink_check" title="alink_check' . str_replace(' ', 'alink_space', check_plain($word['url_title'])) . 'alink_check">alink_check\1alink_check</a>'*/;
@@ -335,7 +338,19 @@ function alinks_add_form() {
  */
 function alinks_add_form_submit($form, &$form_state) {
 
-  db_query("INSERT INTO {alinks} (alink_start_boundary, alink_text, alink_end_boundary, alink_case_insensitive, alink_url, url_title, alink_external, alink_class, alink_weight) VALUES (%d, '%s', %d, %d, '%s', '%s', %d, '%s', %d)", $form_state['values']['start_boundary'], $form_state['values']['word'], $form_state['values']['end_boundary'], $form_state['values']['case_insensitive'], $form_state['values']['url'], $form_state['values']['url_title'], $form_state['values']['external'], $form_state['values']['class'], $form_state['values']['weight']);
+  db_insert('alinks')
+    ->fields(array(
+      'alink_start_boundary' => $form_state['values']['start_boundary'],
+      'alink_text' => $form_state['values']['word'],
+      'alink_end_boundary' => $form_state['values']['end_boundary'],
+      'alink_case_insensitive' => $form_state['values']['case_insensitive'],
+      'alink_url' => $form_state['values']['url'],
+      'url_title' => $form_state['values']['url_title'],
+      'alink_external' => $form_state['values']['external'],
+      'alink_class' => $form_state['values']['class'],
+      'alink_weight' => $form_state['values']['weight'],
+    ))
+  ->execute();
   drupal_set_message('Alink succesfuly added');
 }
 
@@ -351,58 +366,58 @@ function alinks_edit_form() {
     '#collapsed' => FALSE,
   );
   $sql = db_query("SELECT * FROM {alinks} ORDER BY alink_weight, alink_text");
-   if (count(db_fetch_array(($sql))) > 0) {  
+   if ($sql->rowCount() > 0) {  
    	  $sql = db_query("SELECT * FROM {alinks} ORDER BY alink_weight, alink_text"); 
       $form['alinks_edit_form']['edit_alink'] = array('#tree' => TRUE);
-      while ($alink = db_fetch_array($sql)) {
-        $alinks[$alink['id']] = $alink;
-        $form['alinks_edit_form']['edit_alink'][$alink['id']]['start_boundary_edit'] = array(
+      foreach ($sql as $alink) {
+        $alinks[$alink->id] = $alink;
+        $form['alinks_edit_form']['edit_alink'][$alink->id]['start_boundary_edit'] = array(
           '#type' => 'checkbox',
-          '#default_value' => $alink['alink_start_boundary'],
+          '#default_value' => $alink->alink_start_boundary,
         );
-        $form['alinks_edit_form']['edit_alink'][$alink['id']]['word_edit'] = array(
+        $form['alinks_edit_form']['edit_alink'][$alink->id]['word_edit'] = array(
           '#type' => 'textfield',
           '#size' => 10,
           '#maxlength' => 255,
-          '#default_value' => $alink['alink_text'],
+          '#default_value' => $alink->alink_text,
           '#required' => TRUE,
         );
-        $form['alinks_edit_form']['edit_alink'][$alink['id']]['end_boundary_edit'] = array(
+        $form['alinks_edit_form']['edit_alink'][$alink->id]['end_boundary_edit'] = array(
           '#type' => 'checkbox',
-          '#default_value' => $alink['alink_end_boundary'],
+          '#default_value' => $alink->alink_end_boundary,
         );
-        $form['alinks_edit_form']['edit_alink'][$alink['id']]['case_insensitive_edit'] = array(
+        $form['alinks_edit_form']['edit_alink'][$alink->id]['case_insensitive_edit'] = array(
           '#type' => 'checkbox',
-          '#default_value' => $alink['alink_case_insensitive'],
+          '#default_value' => $alink->alink_case_insensitive,
         );
-        $form['alinks_edit_form']['edit_alink'][$alink['id']]['url_edit'] = array(
+        $form['alinks_edit_form']['edit_alink'][$alink->id]['url_edit'] = array(
           '#type' => 'textfield',
           '#size' => 30,
           '#maxlength' => 255,
-          '#default_value' => $alink['alink_url'],
+          '#default_value' => $alink->alink_url,
           '#required' => TRUE,
         );
-        $form['alinks_edit_form']['edit_alink'][$alink['id']]['url_title_edit'] = array(
+        $form['alinks_edit_form']['edit_alink'][$alink->id]['url_title_edit'] = array(
           '#type' => 'textfield',
           '#size' => 30,
           '#maxlength' => 255,
-          '#default_value' => $alink['url_title'],
+          '#default_value' => $alink->url_title,
         );
-        $form['alinks_edit_form']['edit_alink'][$alink['id']]['external_edit'] = array(
+        $form['alinks_edit_form']['edit_alink'][$alink->id]['external_edit'] = array(
           '#type' => 'checkbox',
-          '#default_value' => $alink['alink_external'],
+          '#default_value' => $alink->alink_external,
         );
-        $form['alinks_edit_form']['edit_alink'][$alink['id']]['class_edit'] = array(
+        $form['alinks_edit_form']['edit_alink'][$alink->id]['class_edit'] = array(
           '#type' => 'textfield',
           '#size' => 30,
           '#maxlength' => 255,
-          '#default_value' => $alink['alink_class'],
+          '#default_value' => $alink->alink_class,
         );
-        $form['alinks_edit_form']['edit_alink'][$alink['id']]['weight_edit'] = array(
+        $form['alinks_edit_form']['edit_alink'][$alink->id]['weight_edit'] = array(
           '#type' => 'weight',
-          '#default_value' => $alink['alink_weight'],
+          '#default_value' => $alink->alink_weight,
         );
-        $form['alinks_edit_form']['edit_alink'][$alink['id']]['delete'] = array(
+        $form['alinks_edit_form']['edit_alink'][$alink->id]['delete'] = array(
           '#type' => 'checkbox',
         );
       }
@@ -430,22 +445,24 @@ function theme_alinks_list($form) {
   $header = array(t('Start'), t('String'), t('End'), t('Case'), t('URL'), t('URL title'), t('External'), t('Class'), t('Weight'), t('Delete'));
 
   $rows = array();
+  // We need only first argument of array
+  $form = array_shift($form);
   foreach($form['alinks']['#value'] as $id=>$alink) {
     $row = array();
-    $row[] = array('data' => drupal_render($form['edit_alink'][$alink['id']]['start_boundary_edit']), 'align' => 'center');
-    $row[] = array('data' => drupal_render($form['edit_alink'][$alink['id']]['word_edit']), 'align' => 'left');
-    $row[] = array('data' => drupal_render($form['edit_alink'][$alink['id']]['end_boundary_edit']), 'align' => 'center');
-    $row[] = array('data' => drupal_render($form['edit_alink'][$alink['id']]['case_insensitive_edit']), 'align' => 'center');
-    $row[] = array('data' => drupal_render($form['edit_alink'][$alink['id']]['url_edit']), 'align' => 'left');
-    $row[] = array('data' => drupal_render($form['edit_alink'][$alink['id']]['url_title_edit']), 'align' => 'left');
-    $row[] = array('data' => drupal_render($form['edit_alink'][$alink['id']]['external_edit']), 'align' => 'center');
-    $row[] = array('data' => drupal_render($form['edit_alink'][$alink['id']]['class_edit']), 'align' => 'left');
-    $row[] = array('data' => drupal_render($form['edit_alink'][$alink['id']]['weight_edit']), 'align' => 'center');
-    $row[] = array('data' => drupal_render($form['edit_alink'][$alink['id']]['delete']), 'align' => 'center');
+    $row[] = array('data' => drupal_render($form['edit_alink'][$alink->id]['start_boundary_edit']), 'align' => 'center');
+    $row[] = array('data' => drupal_render($form['edit_alink'][$alink->id]['word_edit']), 'align' => 'left');
+    $row[] = array('data' => drupal_render($form['edit_alink'][$alink->id]['end_boundary_edit']), 'align' => 'center');
+    $row[] = array('data' => drupal_render($form['edit_alink'][$alink->id]['case_insensitive_edit']), 'align' => 'center');
+    $row[] = array('data' => drupal_render($form['edit_alink'][$alink->id]['url_edit']), 'align' => 'left');
+    $row[] = array('data' => drupal_render($form['edit_alink'][$alink->id]['url_title_edit']), 'align' => 'left');
+    $row[] = array('data' => drupal_render($form['edit_alink'][$alink->id]['external_edit']), 'align' => 'center');
+    $row[] = array('data' => drupal_render($form['edit_alink'][$alink->id]['class_edit']), 'align' => 'left');
+    $row[] = array('data' => drupal_render($form['edit_alink'][$alink->id]['weight_edit']), 'align' => 'center');
+    $row[] = array('data' => drupal_render($form['edit_alink'][$alink->id]['delete']), 'align' => 'center');
     $rows[] = $row;
   }
-  $output = theme('table', $header, $rows);
-  $output .= drupal_render($form);
+  $output = theme('table', array('header' => $header, 'rows' => $rows));
+  $output .= drupal_render_children($form);
 
   return $output;
 }
@@ -457,10 +474,25 @@ function alinks_edit_form_submit($form, &$form_state) {
 
   foreach ($form_state['values']['edit_alink'] as $id => $alink) {
     if ($alink['delete']) {
-      db_query("DELETE FROM {alinks} WHERE id = %d", $id);
+      db_delete('alinks')
+        ->condition('id', $id)
+        ->execute();
     }
     else {
-      db_query("UPDATE {alinks} SET alink_start_boundary = %d, alink_text = '%s', alink_end_boundary = %d, alink_case_insensitive = %d, alink_url = '%s', url_title = '%s', alink_external = %d, alink_class = '%s', alink_weight = %d WHERE id = %d", $alink['start_boundary_edit'], $alink['word_edit'], $alink['end_boundary_edit'], $alink['case_insensitive_edit'], $alink['url_edit'], $alink['url_title_edit'], $alink['external_edit'], $alink['class_edit'], $alink['weight_edit'], $id);
+      db_update('alinks') // Table name no longer needs {}
+        ->fields(array(
+          'alink_start_boundary' => $alink['start_boundary_edit'],
+          'alink_text' => $alink['word_edit'],
+          'alink_end_boundary' => $alink['end_boundary_edit'],
+          'alink_case_insensitive' => $alink['case_insensitive_edit'],
+          'alink_url' => $alink['url_edit'],
+          'url_title' => $alink['url_title_edit'],
+          'alink_external' => $alink['external_edit'],
+          'alink_class' => $alink['class_edit'],
+          'alink_weight' => $alink['weight_edit'],
+        ))
+        ->condition('id', $id, '=')
+        ->execute();
     }
   }
   drupal_set_message('Alinks succesfuly updated');
