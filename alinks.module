@@ -471,7 +471,6 @@ function theme_alinks_list($form) {
     $row[] = array('data' => drupal_render($form['edit_alink'][$alink->id]['url_edit']), 'align' => 'left');
     $row[] = array('data' => drupal_render($form['edit_alink'][$alink->id]['url_title_edit']), 'align' => 'left');
     $row[] = array('data' => drupal_render($form['edit_alink'][$alink->id]['external_edit']), 'align' => 'center');
-    $row[] = array('data' => drupal_render($form['edit_alink'][$alink->id]['external_edit']), 'align' => 'center');
     $row[] = array('data' => drupal_render($form['edit_alink'][$alink->id]['class_edit']), 'align' => 'left');
     $row[] = array('data' => drupal_render($form['edit_alink'][$alink->id]['weight_edit']), 'align' => 'center');
     $row[] = array('data' => drupal_render($form['edit_alink'][$alink->id]['delete']), 'align' => 'center');
