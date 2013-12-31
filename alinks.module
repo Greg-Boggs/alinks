@@ -207,7 +207,7 @@ function alinks_make_links($body, $words) {
       $body = str_replace($carriage, $carriage_replacement, $body);
 
       // we get out the already existing links
-      preg_match_all('/\<a\s.*?\>(.*?)\<\/a\>/', $body, $linka);
+      preg_match_all('/\<a\s.*?\>(.*?)\<\/a\>/i', $body, $linka);
       $i = 0;
       $replacement = array();
 
