@@ -1,8 +1,21 @@
-This module is based on the wordpress module “alinks”. Very easy to use, just enter your normal content and setup the terms/links you want on your site through the administration interface.
+Usage Directions:
 
-Main features:
+Step 1:
+Use the configure screen (/admin/settings/alinks) to enable replacements per content type and set a replacement limit.
 
-- Replace terms in the content body with a link.
-- Does not change the node body as it is executed on display only.
-- Can set the amount of occurrence to change.
-- Can set on which content type it will be affected
+Step 2:
+Add links: /admin/structure/alinks
+
+Enter the word you want to replace in the "Word/Phrase" field.
+- leave the "start" and "end" checkboxes unchecked unless you're creating a multilingual replacement.
+- check the "case insensitivity" box if you want it to be case insensitive.
+
+STEP 3:
+Enter the URL for the link in the URL field.
+- For external links, check the external link box and include http://.
+- For internal links do not include the leading /.
+
+Now instances of your word/phrase are turned into links.
+
+Recommended Module:
+External Link (https://drupal.org/project/extlink) adds link icons and target="_blank" to external links.
