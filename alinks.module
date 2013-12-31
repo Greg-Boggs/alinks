@@ -173,7 +173,7 @@ function alinks_make_links($body, $words) {
         $alink_start_boundary = ($word->alink_start_boundary == 1) ? 'B' : 'b';
         $alink_end_boundary = ($word->alink_end_boundary == 1) ? 'B' : 'b';
         $alink_case_insensivity = ($word->alink_case_insensitive == 1) ? 'i' : '';
-        $word->alink_text = htmlspecialchars($word->alink_text);
+        $word->alink_text = trim(htmlspecialchars($word->alink_text));
         $alink_text[] = '$\\' . $alink_start_boundary . '(' . preg_quote($word->alink_text, '$') . ')\\' . $alink_end_boundary . '$' . $alink_case_insensivity;
         if ($word->alink_external == 1) {
           $alink_url[] = l('alink_check\1alink_check',
@@ -471,6 +471,7 @@ function theme_alinks_list($form) {
     $row[] = array('data' => drupal_render($form['edit_alink'][$alink->id]['url_edit']), 'align' => 'left');
     $row[] = array('data' => drupal_render($form['edit_alink'][$alink->id]['url_title_edit']), 'align' => 'left');
     $row[] = array('data' => drupal_render($form['edit_alink'][$alink->id]['external_edit']), 'align' => 'center');
+    ht$row[] = array('data' => drupal_render($form['edit_alink'][$alink->id]['external_edit']), 'align' => 'center');
     $row[] = array('data' => drupal_render($form['edit_alink'][$alink->id]['class_edit']), 'align' => 'left');
     $row[] = array('data' => drupal_render($form['edit_alink'][$alink->id]['weight_edit']), 'align' => 'center');
     $row[] = array('data' => drupal_render($form['edit_alink'][$alink->id]['delete']), 'align' => 'center');
