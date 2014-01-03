@@ -166,6 +166,7 @@ function alinks_make_links($body, $words) {
     // create the replacement array
     $url = (drupal_lookup_path('alias', $_GET['q'])) ? drupal_lookup_path('alias', $_GET['q']) : $_GET['q'];
     $i = 0;
+    $alink_options = array();
     $links_chars = array('/', '-');
     $links_chars_replace = array('alink_slash', 'alink_minus');
     foreach ($words as $word) {
@@ -176,26 +177,22 @@ function alinks_make_links($body, $words) {
         $word->alink_text = trim(htmlspecialchars($word->alink_text));
         $alink_text[] = '$\\' . $alink_start_boundary . '(' . preg_quote($word->alink_text, '$') . ')\\' . $alink_end_boundary . '$' . $alink_case_insensivity;
 
-        if ($word->alink_external == 1) {
-          $alink_url[] = l('alink_check\1alink_check',
-                           str_replace($links_chars, $links_chars_replace, $word->alink_url) . 'alink_check',
-                           array(
-                             'attributes' => array('class' => 'alink_check' . str_replace(' ', 'alink_space', $word->alink_class) . 'alink_check',
-                                                'title' => 'alink_check' . str_replace(' ', 'alink_space', check_plain($word->url_title)) . 'alink_check'),
-                           'absolute' => true
-                         )
-                           );
+        if ($word->alink_external != 1) {
+          $alink_path = 'alink_check' . str_replace('/', 'alink_slash', $word->alink_url) . 'alink_check';
         }
         else {
-          $alink_url[] = l('alink_check\1alink_check',
-                            'alink_check' . str_replace('/', 'alink_slash', $word->alink_url) . 'alink_check',
-                            array(
-                           'attributes' => array('class' => 'alink_check' . str_replace(' ', 'alink_space', $word->alink_class) . 'alink_check',
-                                                'title' => 'alink_check' . str_replace(' ', 'alink_space', check_plain($word->url_title)) . 'alink_check'
-                                               )
-                                  )
-                          );
+          $alink_path = str_replace($links_chars, $links_chars_replace, $word->alink_url) . 'alink_check';
+          $alink_options['absolute'] =  TRUE;
         }
+        if (!empty($word->alink_class)) {
+          $alink_class = 'alink_check' . str_replace(' ', 'alink_space', $word->alink_class) . 'alink_check';
+          $alink_options['attributes']['class'] = $alink_class;
+        }
+        if (!empty($word->url_title)) {
+          $alink_title = 'alink_check' . str_replace(' ', 'alink_space', check_plain($word->url_title)) . 'alink_check';
+          $alink_options['attributes']['title'] = $alink_title;
+        }
+        $alink_url[] = l('alink_check\1alink_check', $alink_path, $alink_options);
         $i++;
       }
     }
