@@ -383,12 +383,17 @@ function alinks_edit_form() {
     '#collapsible' => TRUE,
     '#collapsed' => FALSE,
   );
-  $sql = db_query("SELECT * FROM {alinks} ORDER BY alink_weight, alink_text");
-   if ($sql->rowCount() > 0) {
-      $sql = db_query("SELECT * FROM {alinks} ORDER BY alink_weight, alink_text");
+
+  $result = db_select('alinks', 'a')->extend('PagerDefault')
+    ->limit('10')
+    ->fields('a')
+    ->execute();
+  if ($result->rowCount() > 0) {
+
       $form['alinks_edit_form']['edit_alink'] = array('#tree' => TRUE);
-      foreach ($sql as $alink) {
+      foreach ($result as $alink) {
         $alinks[$alink->id] = $alink;
+
         $form['alinks_edit_form']['edit_alink'][$alink->id]['start_boundary_edit'] = array(
           '#type' => 'checkbox',
           '#default_value' => $alink->alink_start_boundary,
@@ -439,7 +444,8 @@ function alinks_edit_form() {
           '#type' => 'checkbox',
         );
       }
-      $form['alinks_edit_form']['save_edit'] = array(
+    $form['pager'] = array('#markup' => theme('pager'));
+    $form['alinks_edit_form']['save_edit'] = array(
         '#type' => 'submit',
         '#value' => t('Update alinks'),
       );
