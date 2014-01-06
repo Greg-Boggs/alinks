@@ -148,7 +148,6 @@ function alinks_get_strings() {
 
 
   if ($result->rowCount() > 0) {
-    $result = db_query("SELECT * FROM {alinks} ORDER BY alink_weight");
     foreach ($result as $alinks) {
       $alink[$alinks->id] = $alinks;
     }
@@ -382,15 +381,16 @@ function alinks_edit_form() {
   );
 
   $result = db_select('alinks', 'a')->extend('PagerDefault')
-    ->limit('10')
+    ->orderBy('alink_weight')
+    ->orderBy('alink_text')
+    ->limit('30')
     ->fields('a')
     ->execute();
-  if ($result->rowCount() > 0) {
 
+  if ($result->rowCount() > 0) {
       $form['alinks_edit_form']['edit_alink'] = array('#tree' => TRUE);
       foreach ($result as $alink) {
         $alinks[$alink->id] = $alink;
-
         $form['alinks_edit_form']['edit_alink'][$alink->id]['start_boundary_edit'] = array(
           '#type' => 'checkbox',
           '#default_value' => $alink->alink_start_boundary,
@@ -452,8 +452,8 @@ function alinks_edit_form() {
       );
       $form['alinks_edit_form']['#theme'] = 'alinks_list';
     }
-  return $form;
 
+  return $form;
 }
 
 /**
