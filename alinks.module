@@ -168,13 +168,15 @@ function alinks_make_links($body, $words) {
     $alink_options = array();
     $links_chars = array('/', '-');
     $links_chars_replace = array('alink_slash', 'alink_minus');
+    $replacement = array();
+
     foreach ($words as $word) {
       if ($word->alink_url != $url) {
         $alink_start_boundary = ($word->alink_start_boundary == 1) ? 'B' : 'b';
         $alink_end_boundary = ($word->alink_end_boundary == 1) ? 'B' : 'b';
         $alink_case_insensivity = ($word->alink_case_insensitive == 1) ? 'i' : '';
         $word->alink_text = trim(htmlspecialchars($word->alink_text));
-        $alink_text[] = '$\\' . $alink_start_boundary . '(' . preg_quote($word->alink_text, '$') . ')\\' . $alink_end_boundary . '$' . $alink_case_insensivity;
+        $alink_text[] = '$\\' . $alink_start_boundary . '(' . preg_quote($word->alink_text, '$') . ')\\' . $alink_end_boundary . '(?!((?!alink_replaced).)*alink_replaced</a>)$' . $alink_case_insensivity;
 
         if ($word->alink_external != 1) {
           $alink_path = 'alink_check' . str_replace('/', 'alink_slash', $word->alink_url) . 'alink_check';
@@ -191,7 +193,8 @@ function alinks_make_links($body, $words) {
           $alink_title = 'alink_check' . str_replace(' ', 'alink_space', check_plain($word->url_title)) . 'alink_check';
           $alink_options['attributes']['title'] = $alink_title;
         }
-        $alink_url[] = l('alink_check\1alink_check', $alink_path, $alink_options);
+        $alink_url[] = l('alink_replaced\1alink_replaced', $alink_path, $alink_options);
+
         $i++;
       }
     }
@@ -205,20 +208,16 @@ function alinks_make_links($body, $words) {
 
       // we get out the already existing links
       preg_match_all('/\<a\s.*?\>(.*?)\<\/a\>/i', $body, $linka);
-      $i = 0;
-      $replacement = array();
 
       // create the replacement array
       foreach ($linka[0] as $key => $values) {
-        $replacement[] = ' alink_delimiter_' . $i . ' ';
-        $i++;
+        $replacement[] = ' alink_delimiter_' . $key . ' ';
       }
 
       // replace the links with the replacement text
       $body = str_replace($linka[0], $replacement, $body);
 
-      // we get all the text that is not inside a html tag
-      // from the modified text
+      // we get all the text that is not inside a html tag from the modified text
       preg_match_all('/\>(.*?)\</', $body, $output);
       $output[0] = array_unique($output[0]);
       $output[1] = array_unique($output[1]);
@@ -257,6 +256,7 @@ function alinks_make_links($body, $words) {
       // and put back the links in the text
       $body = str_replace($replacement, $linka[0], $body);
       $body = str_replace('alink_check', '', $body);
+      $body = str_replace('alink_replaced', '', $body);
       $body = str_replace('alink_space', ' ', $body);
       $body = str_replace($links_chars_replace, $links_chars, $body);
 
