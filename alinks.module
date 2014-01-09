@@ -438,6 +438,7 @@ function alinks_edit_form() {
           '#type' => 'weight',
           '#default_value' => $alink->alink_weight,
         );
+        $form['alinks_edit_form']['edit_alink'][$alink->id]['weight_edit']['#attributes']['class'] = array('alinks-weight');
         $form['alinks_edit_form']['edit_alink'][$alink->id]['delete'] = array(
           '#type' => 'checkbox',
         );
@@ -463,26 +464,32 @@ function alinks_edit_form() {
 function theme_alinks_list($form) {
   $header = array(t('Start'), t('String'), t('End'), t('Case'), t('URL'), t('URL title'),
                   t('External'), t('Class'), t('Weight'), t('Delete'));
+  $table_drag_weight_cls = 'alinks-weight';
   $rows = array();
 
   // We need only first argument of array
   $form = array_shift($form);
   foreach ($form['alinks']['#value'] as $id => $alink) {
-    $row = array();
-    $row[] = array('data' => drupal_render($form['edit_alink'][$alink->id]['start_boundary_edit']), 'align' => 'center');
-    $row[] = array('data' => drupal_render($form['edit_alink'][$alink->id]['word_edit']), 'align' => 'left');
-    $row[] = array('data' => drupal_render($form['edit_alink'][$alink->id]['end_boundary_edit']), 'align' => 'center');
-    $row[] = array('data' => drupal_render($form['edit_alink'][$alink->id]['case_insensitive_edit']), 'align' => 'center');
-    $row[] = array('data' => drupal_render($form['edit_alink'][$alink->id]['url_edit']), 'align' => 'left');
-    $row[] = array('data' => drupal_render($form['edit_alink'][$alink->id]['url_title_edit']), 'align' => 'left');
-    $row[] = array('data' => drupal_render($form['edit_alink'][$alink->id]['external_edit']), 'align' => 'center');
-    $row[] = array('data' => drupal_render($form['edit_alink'][$alink->id]['class_edit']), 'align' => 'left');
-    $row[] = array('data' => drupal_render($form['edit_alink'][$alink->id]['weight_edit']), 'align' => 'center');
-    $row[] = array('data' => drupal_render($form['edit_alink'][$alink->id]['delete']), 'align' => 'center');
-    $rows[] = $row;
+
+    $rows[] = array(
+      'data' => array(
+        drupal_render($form['edit_alink'][$alink->id]['start_boundary_edit']),
+        drupal_render($form['edit_alink'][$alink->id]['word_edit']),
+        drupal_render($form['edit_alink'][$alink->id]['end_boundary_edit']),
+        drupal_render($form['edit_alink'][$alink->id]['case_insensitive_edit']),
+        drupal_render($form['edit_alink'][$alink->id]['url_edit']),
+        drupal_render($form['edit_alink'][$alink->id]['url_title_edit']),
+        drupal_render($form['edit_alink'][$alink->id]['external_edit']),
+        drupal_render($form['edit_alink'][$alink->id]['class_edit']),
+        drupal_render($form['edit_alink'][$alink->id]['weight_edit']),
+        drupal_render($form['edit_alink'][$alink->id]['delete']),
+      ),
+      'class' => array('draggable'),
+    );
   }
-  $output = theme('table', array('header' => $header, 'rows' => $rows));
+  $output = theme('table', array('header' => $header, 'rows' => $rows, 'attributes' => array('id' => 'alinks-table')));
   $output .= drupal_render_children($form);
+  drupal_add_tabledrag('alinks-table', 'order', 'siblings', $table_drag_weight_cls);
 
   return $output;
 }
