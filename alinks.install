@@ -3,6 +3,8 @@
 /**
  * @file
  * Install, update and uninstall functions for the Alinks module.
+ *
+ * TODO: Convert to D8
  */
 
 function alinks_uninstall() {

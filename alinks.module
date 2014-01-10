@@ -109,7 +109,7 @@ function alinks_get_strings() {
   $alink = array();
   $object = new stdClass();
 
-  $object->result = 22;
+  $object->id = 22;
   $object->alink_start_boundary = 0;
   $object->alink_text = 'such a';
   $object->alink_end_boundary = 0;
@@ -120,7 +120,7 @@ function alinks_get_strings() {
   $object->alink_class = 'alinks-link';
   $object->alink_weight = -10;
 
-   $alink[$object->id] = $object;
+  $alink[$object->id] = $object;
 
   return $alink;
 }
@@ -132,8 +132,8 @@ function alinks_make_links($body, $words) {
   if (is_array($words) && isset($body)) {
 
     // create the replacement array
-    // TODO: replace this
-    //$url = (current_path('alias', $_GET['q'])) ? current_path('alias', $_GET['q']) : $_GET['q'];
+    // TODO: Replace this with D8 equiv
+    //$url = (drupal_lookup_path('alias', $_GET['q'])) ? drupal_lookup_path('alias', $_GET['q']) : $_GET['q'];
     $url = 'node/1';
     $i = 0;
     $alink_options = array();
@@ -242,6 +242,8 @@ function alinks_make_links($body, $words) {
 
 /**
  * Generate the form used to add alinks to drupal
+ *
+ * TODO: Replace this with d8
  */
 function alinks_add_form() {
 
@@ -320,6 +322,8 @@ function alinks_add_form() {
 
 /**
  * Submit the form used to add alinks and insert the data in the db
+ *
+ * TODO: Convert to D8
  */
 function alinks_add_form_submit($form, &$form_state) {
 
@@ -341,6 +345,8 @@ function alinks_add_form_submit($form, &$form_state) {
 
 /**
  * Generate the form used to edit alinks
+ *
+ * TODO: Convert to D8
  */
 function alinks_edit_form() {
   $form['alinks_edit_form'] = array(
@@ -431,6 +437,8 @@ function alinks_edit_form() {
 
 /**
  * Theme function for the list of alinks
+ *
+ * TODO: Convert to D8
  */
 function theme_alinks_list($form) {
   $header = array(t('Start'), t('String'), t('End'), t('Case'), t('URL'), t('URL title'),
@@ -467,6 +475,8 @@ function theme_alinks_list($form) {
 
 /**
  * Process the edit alinks form
+ *
+ * TODO: Convert to D8
  */
 function alinks_edit_form_submit($form, &$form_state) {
   foreach ($form_state['values']['edit_alink'] as $id => $alink) {
