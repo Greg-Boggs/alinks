@@ -1,0 +1,7 @@
+alinks.settings:
+  path: '/admin/config/content/alinks'
+  defaults:
+    _form: '\Drupal\alinks\Form\AlinksSettingsForm'
+    _title: 'Alinks Settings'
+  requirements:
+    _permission: 'administer alinks'

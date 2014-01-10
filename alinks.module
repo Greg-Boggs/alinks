@@ -3,6 +3,12 @@
  * @file
  * this module allows users to associates defined text to links
  */
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\node\NodeInterface;
+use Drupal\node\NodeTypeInterface;
+use Drupal\Core\Language\Language;
+use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
+use Drupal\Core\Template\Attribute;
 
 /**
  * Implementation of hook_permission().
@@ -10,11 +16,8 @@
 function alinks_permission() {
 
   return array(
-    'administer site configuration' => array(
-      'title' => t('administer site configuration'),
-    ),
-    'edit alinks' => array(
-      'title' => t('edit alinks'),
+    'administer alinks' => array(
+      'title' => t('administer alinks'),
     ),
   );
 }
@@ -30,48 +33,6 @@ function alinks_theme() {
   );
 }
 
-/**
- * Implementation of hook_menu().
- */
-function alinks_menu() {
-  $items = array();
-  $admin = array('administer site configuration');
-  $editor = array('edit alinks');
-
-  $items['admin/config/content/alinks'] = array(
-    'title' => t('Alinks'),
-    'description' => t('Set the preferences for Alinks module.'),
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('alinks_admin_settings'),
-    'access arguments' => $admin,
-  );
-  $items['admin/structure/alinks'] = array(
-    'title' => t('Alinks'),
-    'description' => t('Define & edit alinks'),
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('alinks_add_form'),
-    'access arguments' => $editor,
-    'type' => MENU_NORMAL_ITEM,
-  );
-  $items['admin/structure/alinks/add'] = array(
-    'title' => t('Add Alink'),
-    'description' => t('Add alink'),
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('alinks_add_form'),
-    'access arguments' => $editor,
-    'type' => MENU_DEFAULT_LOCAL_TASK,
-  );
-  $items['admin/structure/alinks/edit'] = array(
-    'title' => t('Edit Alinks'),
-    'description' => t('Edit alinks'),
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('alinks_edit_form'),
-    'access arguments' => $editor,
-    'type' => MENU_LOCAL_TASK,
-  );
-
-  return $items;
-}
 
 /*
  * Generate the form for the settings page
@@ -125,10 +86,12 @@ function alinks_page() {
 }
 
 /**
- * Implementation of hook_node_view().
+ * Implements hook_node_view()
  */
-function alinks_node_view($node, $view_mode, $langcode) {
-  $node_types = in_array($node->type, variable_get('alinks_node_types', array()), TRUE);
+function alinks_node_view(EntityInterface $node, EntityViewDisplayInterface $display, $view_mode) {
+
+  //$node_types = in_array($node->type, variable_get('alinks_node_types', array()), TRUE);
+  $node_types = true;
   if ($node_types) {
     $words = alinks_get_strings();
     if ($words) {
@@ -144,14 +107,20 @@ function alinks_node_view($node, $view_mode, $langcode) {
  */
 function alinks_get_strings() {
   $alink = array();
-  $result = db_query("SELECT * FROM {alinks} ORDER BY alink_weight");
+  $object = new stdClass();
 
+  $object->result = 22;
+  $object->alink_start_boundary = 0;
+  $object->alink_text = 'such a';
+  $object->alink_end_boundary = 0;
+  $object->alink_case_insensitive = 0;
+  $object->alink_url = 'http://www.gregboggs.com';
+  $object->url_title = null;
+  $object->alink_external = 1;
+  $object->alink_class = 'alinks-link';
+  $object->alink_weight = -10;
 
-  if ($result->rowCount() > 0) {
-    foreach ($result as $alinks) {
-      $alink[$alinks->id] = $alinks;
-    }
-  }
+   $alink[$object->id] = $object;
 
   return $alink;
 }
@@ -163,7 +132,9 @@ function alinks_make_links($body, $words) {
   if (is_array($words) && isset($body)) {
 
     // create the replacement array
-    $url = (drupal_lookup_path('alias', $_GET['q'])) ? drupal_lookup_path('alias', $_GET['q']) : $_GET['q'];
+    // TODO: replace this
+    //$url = (current_path('alias', $_GET['q'])) ? current_path('alias', $_GET['q']) : $_GET['q'];
+    $url = 'node/1';
     $i = 0;
     $alink_options = array();
     $links_chars = array('/', '-');
