@@ -1,0 +1,5 @@
+CHANGELOG for Alinks for Drupal 7
+
+Alinks 1.x-dev
+=================
+#1070254 by joebachana, justy, furamag: Ported To Drupal 7

@@ -1,0 +1,6 @@
+alinks.settings:
+  type: mapping
+  label: Settings
+  mapping:
+    alinks_limit:
+      type: integer
