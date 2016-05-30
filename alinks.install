@@ -6,8 +6,8 @@
  */
 
 function alinks_uninstall() {
-  \Drupal::config('alinks.settings')->clear('alinks_node_types')->save();
-  \Drupal::config('alinks.settings')->clear('alinks_limit')->save();
+  \Drupal::config('alinks.settings')->clear('node_types')->save();
+  \Drupal::config('alinks.settings')->clear('limit')->save();
 }
 
 /**
@@ -79,59 +79,4 @@ function alinks_schema() {
   );
 
   return $schema;
-}
-
-
-function alinks_update_1() {
-  $ret = array();
-
-  switch ($GLOBALS['db_type']) {
-    case 'pgsql':
-      db_add_column($ret, 'alinks', 'alink_start_boundary', 'TINYINT(1)', array('DEFAULT' => 0));
-      db_add_column($ret, 'alinks', 'alink_end_boundary', 'TINYINT(1)', array('DEFAULT' => 0));
-      break;
-    case 'mysql':
-    case 'mysqli':
-      $ret[] = update_sql("ALTER TABLE {alinks} ADD COLUMN alink_start_boundary TINYINT(1) NOT NULL DEFAULT 0 AFTER id");
-      $ret[] = update_sql("ALTER TABLE {alinks} ADD COLUMN alink_end_boundary TINYINT(1) NOT NULL DEFAULT 0 AFTER alink_text");
-      break;
-  }
-
-  return $ret;
-}
-
-function alinks_update_2() {
-  $ret = array();
-
-  switch ($GLOBALS['db_type']) {
-    case 'pgsql':
-      db_add_column($ret, 'alinks', 'alink_case_insensitive', 'TINYINT(1)', array('DEFAULT' => 0));
-      break;
-    case 'mysql':
-    case 'mysqli':
-      $ret[] = update_sql("ALTER TABLE {alinks} ADD COLUMN alink_case_insensitive TINYINT(1) NOT NULL DEFAULT 0 AFTER alink_end_boundary");
-      break;
-  }
-
-  return $ret;
-}
-
-function alinks_update_3() {
-  $ret = array();
-
-  switch ($GLOBALS['db_type']) {
-    case 'pgsql':
-      db_add_column($ret, 'alinks', 'alink_external', 'TINYINT(1)', array('DEFAULT' => 0));
-      db_add_column($ret, 'alinks', 'alink_class', 'VARCHAR(255)', array('DEFAULT' => 'alinks-link'));
-      db_add_column($ret, 'alinks', 'alink_weight', 'INT(3)', array('DEFAULT' => 0));
-      break;
-    case 'mysql':
-    case 'mysqli':
-      $ret[] = update_sql("ALTER TABLE {alinks} ADD COLUMN alink_external TINYINT(1) NOT NULL DEFAULT 0 AFTER alink_end_boundary");
-      $ret[] = update_sql("ALTER TABLE {alinks} ADD COLUMN alink_class VARCHAR(255) NOT NULL DEFAULT 'alinks-link' AFTER alink_external");
-      $ret[] = update_sql("ALTER TABLE {alinks} ADD COLUMN alink_weight INT(3) NOT NULL DEFAULT 0 AFTER alink_class");
-      break;
-  }
-
-  return $ret;
 }
