@@ -92,8 +92,8 @@ class AlinksSettingsForm extends ConfigFormBase {
     $config = $this->config('alinks.settings');
 
     $config
-      ->set('limit', $form_state->getValue('limit'))
       ->set('node_types', $form_state->getValue('node_types'))
+      ->set('limit', $form_state->getValue('limit'))
       ->save();
 
     parent::submitForm($form, $form_state);
