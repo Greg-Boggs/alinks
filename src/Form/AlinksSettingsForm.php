@@ -52,8 +52,7 @@ class AlinksSettingsForm extends ConfigFormBase {
       '#type' => 'fieldset',
       '#title' => t('Alinks node types'),
       '#description' => t('Choose the node types into which Alinks will automatically insert links.'),
-      '#collapsible' => TRUE,
-      '#collapsed' => TRUE,
+      '#collapsible' => FALSE,
     ];
     $fieldset['node_types']['node_types'] = [
       '#type' => 'checkboxes',

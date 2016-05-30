@@ -95,7 +95,7 @@ function alinks_page() {
  * Implementation of hook_node_view().
  */
 function alinks_node_view(array &$build, \Drupal\node\NodeInterface $node, $view_mode, $langcode) {
-$node_types = in_array($node->getType(), \Drupal::config('alinks.settings')->get('alinks_node_types'), TRUE);
+$node_types = in_array($node->getType(), \Drupal::config('alinks.settings')->get('node_types'), TRUE);
   if ($node_types) {
     $words = alinks_get_strings();
     if ($words) {
