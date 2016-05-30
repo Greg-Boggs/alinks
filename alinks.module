@@ -81,51 +81,6 @@ function alinks_menu() {
   return $items;
 }
 
-/*
- * Generate the form for the settings page
- */
-function alinks_admin_settings() {
-
-  // Get node types and create array for options field
-  $types = node_type_get_types();
-  $types_options = array();
-  foreach ($types as $k => $v) {
-    $types_options[$k] = $v->name;
-  }
-  $form['alinks_settings'] = array(
-    '#type' => 'fieldset',
-    '#title' => t('Alinks Settings'),
-    '#collapsible' => FALSE,
-  );
-  $form['alinks_settings']['alinks_node_types'] = array(
-    '#type' => 'fieldset',
-    '#title' => t('Alinks node types'),
-    '#description' => t('Choose the node types into which alinks will automatically insert links.'),
-    '#collapsible' => TRUE,
-    '#collapsed' => TRUE,
-  );
-  // @FIXME
-// Could not extract the default value because it is either indeterminate, or
-// not scalar. You'll need to provide a default value in
-// config/install/alinks.settings.yml and config/schema/alinks.schema.yml.
-$form['alinks_settings']['alinks_node_types']['alinks_node_types'] = array(
-    '#type' => 'checkboxes',
-    '#title' => t('Alinks node types'),
-    '#description' => t('Select node types'),
-    '#options' => $types_options,
-    '#default_value' => \Drupal::config('alinks.settings')->get('alinks_node_types'),
-  );
-  $form['alinks_settings']['alinks_limit'] = array(
-    '#type' => 'textfield',
-    '#size' => 5,
-    '#maxlenghth' => 3,
-    '#title' => t('Alinks limit'),
-    '#description' => t('Set the maxium instances an alink can replace. Use -1 if you want all instances in the node to be replaced.'),
-    '#default_value' => \Drupal::config('alinks.settings')->get('alinks_limit'),
-  );
-
-  return system_settings_form($form);
-}
 /**
  * Generate the page that will render the forms for adding and editing Alinks
  */
