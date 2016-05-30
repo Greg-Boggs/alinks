@@ -56,10 +56,6 @@ class AlinksSettingsForm extends ConfigFormBase {
       '#collapsible' => TRUE,
       '#collapsed' => TRUE,
     ];
-    // @FIXME
-// Could not extract the default value because it is either indeterminate, or
-// not scalar. You'll need to provide a default value in
-// config/install/alinks.settings.yml and config/schema/alinks.schema.yml.
     $fieldset['alinks_node_types']['alinks_node_types'] = [
       '#type' => 'checkboxes',
       '#title' => t('Alinks node types'),
