@@ -95,10 +95,6 @@ function alinks_page() {
  * Implementation of hook_node_view().
  */
 function alinks_node_view(array &$build, \Drupal\node\NodeInterface $node, $view_mode, $langcode) {
-  // @FIXME
-// Could not extract the default value because it is either indeterminate, or
-// not scalar. You'll need to provide a default value in
-// config/install/alinks.settings.yml and config/schema/alinks.schema.yml.
 $node_types = in_array($node->getType(), \Drupal::config('alinks.settings')->get('alinks_node_types'), TRUE);
   if ($node_types) {
     $words = alinks_get_strings();
