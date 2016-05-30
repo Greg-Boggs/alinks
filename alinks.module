@@ -181,6 +181,7 @@ function alinks_make_links($body, $words) {
     // create the replacement array
     $url = (drupal_lookup_path('alias', $_GET['q'])) ? drupal_lookup_path('alias', $_GET['q']) : $_GET['q'];
     $i = 0;
+    $title = 'alink_replaced\1alink_replaced';
     $alink_options = array();
     $links_chars = array('/', '-');
     $links_chars_replace = array('alink_slash', 'alink_minus');
@@ -210,11 +211,7 @@ function alinks_make_links($body, $words) {
           $alink_title = 'alink_check' . str_replace(' ', 'alink_space', \Drupal\Component\Utility\SafeMarkup::checkPlain($word->url_title)) . 'alink_check';
           $alink_options['attributes']['title'] = $alink_title;
         }
-        // @FIXME
-// l() expects a Url object, created from a route name or external URI.
-// $alink_url[] = l('alink_replaced\1alink_replaced', $alink_path, $alink_options);
-
-
+        $alink_url[] = new Link($title, $alink_path, $alink_options);
         $i++;
       }
     }
