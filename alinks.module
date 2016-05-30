@@ -521,7 +521,7 @@ function theme_alinks_list($form) {
 // 
 // @see https://www.drupal.org/node/2195739
 // $output = theme('table', array('header' => $header, 'rows' => $rows, 'attributes' => array('id' => 'alinks-table')));
-
+  $output = [];
   $output .= drupal_render_children($form);
   // @FIXME
 // TableDrag is now attached with the #tabledrag property of certain render
