@@ -49,27 +49,27 @@ class AlinksSettingsForm extends ConfigFormBase {
     foreach ($types as $k => $v) {
       $types_options[$k] = $v->name;
     }
-    $fieldset['alinks_node_types'] = [
+    $fieldset['node_types'] = [
       '#type' => 'fieldset',
       '#title' => t('Alinks node types'),
       '#description' => t('Choose the node types into which Alinks will automatically insert links.'),
       '#collapsible' => TRUE,
       '#collapsed' => TRUE,
     ];
-    $fieldset['alinks_node_types']['alinks_node_types'] = [
+    $fieldset['node_types']['node_types'] = [
       '#type' => 'checkboxes',
-      '#title' => t('Alinks node types'),
-      '#description' => t('Select node types'),
+      '#title' => t('Node types'),
+      '#description' => t('Select content types to apply Alinks to'),
       '#options' => $types_options,
-      '#default_value' => $config->get('alinks_node_types'),
+      '#default_value' => $config->get('node_types'),
     ];
-    $fieldset['alinks_limit'] = [
+    $fieldset['limit'] = [
       '#type' => 'textfield',
       '#size' => 5,
       '#maxlenghth' => 3,
       '#title' => t('Alinks limit'),
-      '#description' => t('Set the maxium instances an alink can replace. Use -1 if you want all instances in the node to be replaced.'),
-      '#default_value' => $config->get('alinks_limit'),
+      '#description' => t('Set the maximum instances an Alink can replace. Use -1 if you want all instances in the node to be replaced.'),
+      '#default_value' => $config->get('limit'),
     ];
 
     // Inserts the fieldset for the settings fields.
@@ -89,19 +89,11 @@ class AlinksSettingsForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    $config = $this->config('easy_breadcrumb.settings');
+    $config = $this->config('alinks.settings');
 
     $config
-      ->set(EasyBreadcrumbConstants::INCLUDE_INVALID_PATHS, $form_state->getValue(EasyBreadcrumbConstants::INCLUDE_INVALID_PATHS))
-      ->set(EasyBreadcrumbConstants::EXCLUDED_PATHS, $form_state->getValue(EasyBreadcrumbConstants::EXCLUDED_PATHS))
-      ->set(EasyBreadcrumbConstants::SEGMENTS_SEPARATOR, $form_state->getValue(EasyBreadcrumbConstants::SEGMENTS_SEPARATOR))
-      ->set(EasyBreadcrumbConstants::INCLUDE_HOME_SEGMENT, $form_state->getValue(EasyBreadcrumbConstants::INCLUDE_HOME_SEGMENT))
-      ->set(EasyBreadcrumbConstants::HOME_SEGMENT_TITLE, $form_state->getValue(EasyBreadcrumbConstants::HOME_SEGMENT_TITLE))
-      ->set(EasyBreadcrumbConstants::INCLUDE_TITLE_SEGMENT, $form_state->getValue(EasyBreadcrumbConstants::INCLUDE_TITLE_SEGMENT))
-      ->set(EasyBreadcrumbConstants::TITLE_SEGMENT_AS_LINK, $form_state->getValue(EasyBreadcrumbConstants::TITLE_SEGMENT_AS_LINK))
-      ->set(EasyBreadcrumbConstants::TITLE_FROM_PAGE_WHEN_AVAILABLE, $form_state->getValue(EasyBreadcrumbConstants::TITLE_FROM_PAGE_WHEN_AVAILABLE))
-      //->set(EasyBreadcrumbConstants::CAPITALIZATOR_MODE, $form_state->getValue(EasyBreadcrumbConstants::CAPITALIZATOR_MODE))
-      //->set(EasyBreadcrumbConstants::CAPITALIZATOR_IGNORED_WORDS, $form_state->getValue(EasyBreadcrumbConstants::CAPITALIZATOR_IGNORED_WORDS))
+      ->set('limit', $form_state->getValue('limit'))
+      ->set('node_types', $form_state->getValue('node_types'))
       ->save();
 
     parent::submitForm($form, $form_state);
