@@ -564,5 +564,5 @@ function alinks_edit_form_submit($form, &$form_state) {
         ->execute();
     }
   }
-  drupal_set_message('Alinks succesfuly updated');
+  drupal_set_message('Alinks successfully updated');
 }
