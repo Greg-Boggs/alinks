@@ -4,3 +4,5 @@ alinks.settings:
   mapping:
     alinks_limit:
       type: integer
+    alinks_node_types:
+      type: sequence
