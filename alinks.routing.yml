@@ -4,4 +4,4 @@ alinks.settings_form:
     _title: 'Alinks'
     _form: \Drupal\alinks\Form\AlinksSettingsForm
   requirements:
-    _permission: 'administer alinks'
+    _permission: 'administer site configuration'
