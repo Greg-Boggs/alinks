@@ -40,7 +40,7 @@ function alinks_theme() {
  * and linking systems, see https://api.drupal.org/api/drupal/core%21includes%21menu.inc/group/menu/8
  */
 
-
+/*
 function alinks_menu() {
   $items = array();
   $admin = array('administer site configuration');
@@ -80,7 +80,7 @@ function alinks_menu() {
 
   return $items;
 }
-
+*/
 /**
  * Generate the page that will render the forms for adding and editing Alinks
  */

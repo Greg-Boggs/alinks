@@ -6,3 +6,5 @@ alinks.settings:
       type: integer
     node_types:
       type: sequence
+      sequence:
+        type: string

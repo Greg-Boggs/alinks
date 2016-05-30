@@ -10,6 +10,7 @@ namespace Drupal\alinks\Form;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element;
+use Drupal\node\Entity\NodeType;
 
 /**
  *  Build Alinks settings form.
@@ -32,6 +33,7 @@ class AlinksSettingsForm extends ConfigFormBase {
 
   public function buildForm(array $form, FormStateInterface $form_state) {
     $config = $this->config('alinks.settings');
+    $types_options = [];
     $form = [];
 
     // Fieldset for grouping general settings fields.
@@ -39,15 +41,16 @@ class AlinksSettingsForm extends ConfigFormBase {
       '#type' => 'fieldset',
       '#title' => t('Settings'),
       '#collapsible' => FALSE,
-      '#collapsed' => FALSE,
     ];
 
     // Get node types and create array for options field
-    $types = node_type_get_types();
-    $types_options = array();
-    foreach ($types as $k => $v) {
-      $types_options[$k] = $v->name;
+    $all_content_types = NodeType::loadMultiple();
+
+    /** @var NodeType $content_type */
+    foreach ($all_content_types as $machine_name => $content_type) {
+      $types_options[$machine_name] = $content_type->label();
     }
+
     $fieldset['node_types'] = [
       '#type' => 'fieldset',
       '#title' => t('Alinks node types'),
