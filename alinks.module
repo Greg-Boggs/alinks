@@ -10,8 +10,8 @@
 function alinks_permission() {
 
   return array(
-    'administer site configuration' => array(
-      'title' => t('administer site configuration'),
+    'administer alinks' => array(
+      'title' => t('administer alinks'),
     ),
     'edit alinks' => array(
       'title' => t('edit alinks'),

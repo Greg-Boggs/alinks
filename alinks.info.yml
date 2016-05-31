@@ -1,7 +1,5 @@
 name: Alinks
-description: 'Allows users to associates defined text to links.'
+description: Allows editors to automatically transform keyword phrases into links.
 core: 8.x
-version: 7.x-1.2+4-dev
-project: alinks
-datestamp: '1389301710'
 type: module
+configure: admin/config/content/pants
