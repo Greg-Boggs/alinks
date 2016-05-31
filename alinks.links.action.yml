@@ -1,0 +1,6 @@
+entity.alink.add_form:
+  route_name: 'entity.alink.add_form'
+  title: 'Add Alink'
+  appears_on:
+    - entity.alink.collection
+
