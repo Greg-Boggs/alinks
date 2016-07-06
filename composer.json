@@ -1,0 +1,12 @@
+{
+    "name": "drupal/alinks",
+    "description": "Allows editors to automatically transform keyword phrases into links.",
+    "type": "drupal-module",
+    "authors": [
+        {
+            "name": "Greg Boggs",
+            "email": "me@gregboggs.com"
+        }
+    ],
+    "require": {}
+}
