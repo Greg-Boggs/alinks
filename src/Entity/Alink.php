@@ -40,17 +40,79 @@ use Drupal\Core\Config\Entity\ConfigEntityBase;
 class Alink extends ConfigEntityBase implements AlinkInterface {
 
   /**
-   * The Alink ID.
+   * The ID.
    *
    * @var string
    */
   protected $id;
 
   /**
-   * The Alink label.
+   * The label.
    *
    * @var string
    */
   protected $label;
 
+  /**
+   * The start boundary.
+   *
+   * @var int
+   */
+  public $start_boundary;
+
+  /**
+   * The link text.
+   *
+   * @var string
+   */
+  public $text;
+
+  /**
+   * The end boundary.
+   *
+   * @var int
+   */
+  public $end_boundary;
+
+  /**
+   * Case insensitive matching.
+   *
+   * @var int
+   */
+  public $case_insensitive;
+
+  /**
+   * The link url.
+   *
+   * @var string
+   */
+  public $url;
+
+  /**
+   * The link title.
+   *
+   * @var string
+   */
+  public $url_title;
+
+  /**
+   * Is external link.
+   *
+   * @var int
+   */
+  public $external;
+
+  /**
+   * The link class.
+   *
+   * @var string
+   */
+  public $class;
+
+  /**
+   * The link weight.
+   *
+   * @var int
+   */
+  public $weight;
 }
