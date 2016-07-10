@@ -6,7 +6,7 @@ alinks.settings_form:
 
 # Alink menu items definition
 entity.alink.collection:
-  title: 'Alinks'
+  title: 'Alink'
   route_name: entity.alink.collection
   description: 'List Alinks'
   parent: system.admin_structure

@@ -30,7 +30,7 @@ function alinks_permission() {
  * Implements of hook_node_view().
  */
 function alinks_node_view(array &$build, NodeInterface $node, $view_mode, $langcode) {
-  print_r('1');
+  print('<h1>works</h1>');
   $node_types = \Drupal::config('alinks.settings')->get('node_types');
   if (!is_array($node_types)) {
     return;
