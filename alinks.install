@@ -6,6 +6,5 @@
  */
 
 function alinks_uninstall() {
-  //\Drupal::config('alinks.settings')->clear('node_types')->save();
-  //\Drupal::config('alinks.settings')->clear('limit')->save();
+
 }

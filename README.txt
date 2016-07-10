@@ -1,10 +1,10 @@
 Usage Directions:
 
 Step 1:
-Use the configure screen (/admin/settings/alinks) to enable replacements per content type and set a replacement limit.
+Configure an input filter (admin/config/content/formats) to enable replacements per format and set a replacement limit.
 
 Step 2:
-Add links: /admin/structure/alinks
+Add links: /admin/structure/alink
 
 Enter the word you want to replace in the "Word/Phrase" field.
 - leave the "start" and "end" checkboxes unchecked unless you're creating a multilingual replacement.

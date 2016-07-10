@@ -1,5 +1,5 @@
 entity.alink.collection:
-  title: 'Alink'
+  title: 'Alinks'
   route_name: entity.alink.collection
   description: 'List Alinks'
   parent: system.admin_structure

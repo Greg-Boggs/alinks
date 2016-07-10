@@ -1,6 +1,6 @@
 {
     "name": "drupal/alinks",
-    "description": "Allows editors to automatically transform keyword phrases into links.",
+    "description": "Uses a format filter to automatically transform keyword phrases into links.",
     "type": "drupal-module",
     "authors": [
         {

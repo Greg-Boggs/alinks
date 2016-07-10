@@ -2,4 +2,4 @@ name: Alinks
 description: Allows editors to automatically transform keyword phrases into links.
 core: 8.x
 type: module
-configure: admin/config/content/pants
+configure: admin/config/content/formats
