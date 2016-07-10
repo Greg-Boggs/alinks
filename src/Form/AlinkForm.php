@@ -101,7 +101,6 @@ class AlinkForm extends EntityForm {
     $form['external'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('External Link'),
-      '#maxlength' => 255,
       '#default_value' => $alink->external,
       '#description' => $this->t('Handle this as an external link'),
       '#required' => FALSE,
