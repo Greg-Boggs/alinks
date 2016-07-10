@@ -14,9 +14,9 @@ class AlinkListBuilder extends ConfigEntityListBuilder {
    * {@inheritdoc}
    */
   public function buildHeader() {
-    $header['label'] = $this->t('Alink');
+    $header['label'] = $this->t('Label');
     $header['id'] = $this->t('Machine name');
-    $header['text'] = $this->t('Text');
+    $header['text'] = $this->t('Replaced Text');
     $header['url'] = $this->t('URL');
 
     return $header + parent::buildHeader();
