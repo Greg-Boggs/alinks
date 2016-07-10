@@ -60,10 +60,6 @@ class AlinksFilter extends FilterBase {
    * {@inheritdoc}
    */
   public function process($text, $langcode) {
-    print('<h1>run</h1>');
-    $settings =  $this->settings;
-    $limit = $settings['limit'];
-
     $words = $this->getAlinks();
     if ($words) {
       if (is_array($words) && !empty($words) && isset($text)) {
@@ -78,7 +74,6 @@ class AlinksFilter extends FilterBase {
    * {@inheritdoc}
    */
   public function tips($long = FALSE) {
-    $settings = $this->settings;
     $output = '';
 
     if ($long) {
@@ -109,10 +104,12 @@ class AlinksFilter extends FilterBase {
    */
   private function processLinks($body, $words) {
     if (is_array($words) && isset($body)) {
-
+      $settings =  $this->settings;
+      $limit = $settings['limit'];
+      
       // create the replacement array
-      $path = $_GET['q'];
-      $url = \Drupal::service('path.alias_manager')->getAliasByPath('/' . $path);
+      $current_path = \Drupal::request()->getRequestUri();
+
       $i = 0;
       $title = 'alink_replaced\1alink_replaced';
       $alink_options = array();
@@ -121,14 +118,14 @@ class AlinksFilter extends FilterBase {
       $replacement = array();
 
       foreach ($words as $word) {
-        if ($word->getUrl() != $url) {
+        if ($word->getUrl() != $current_path) {
           $alink_start_boundary = ($word->getStartBoundary() == 1) ? 'B' : 'b';
           $alink_end_boundary = ($word->getEndBoundary() == 1) ? 'B' : 'b';
           $alink_case_insensivity = ($word->getCaseInsensitive() == 1) ? 'i' : '';
 
           $alink_text[] = '$\\' . $alink_start_boundary . '(' . preg_quote($word->getText(), '$') . ')\\' . $alink_end_boundary . '(?!((?!alink_replaced).)*alink_replaced</a>)$u' . $alink_case_insensivity;
 
-          if ($word->alink_external != 1) {
+          if ($word->getExternal() != 1) {
             $alink_path = 'alink_check' . str_replace('/', 'alink_slash', $word->getUrl()) . 'alink_check';
           }
           else {
@@ -144,9 +141,9 @@ class AlinksFilter extends FilterBase {
             $alink_options['attributes']['title'] = $alink_title;
           }
           $url = Url::fromUri($alink_path);
-          $alink_url[] = new Link($title, $url, $alink_options);
-
-          $i++;
+          $link = new Link($title, $url, $alink_options);
+          $alink_url[] = $link->toString();
+            $i++;
         }
       }
       if ($i > 0) {
@@ -175,7 +172,6 @@ class AlinksFilter extends FilterBase {
 
         // transform the result array to a string so we can use the limit argument
         $text = implode(' alink_delimiter_one_string ', $output[1]);
-        $limit = \Drupal::config('alinks.settings')->get('alinks_limit');
 
         // make the actual replacement
         if ($limit == -1) {
