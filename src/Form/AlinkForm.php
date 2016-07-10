@@ -49,7 +49,7 @@ class AlinkForm extends EntityForm {
       '#type' => 'checkbox',
       '#title' => $this->t('Start Boundary'),
       '#default_value' => $alink->start_boundary,
-      '#description' => $this->t('Use a start boundary which helps with matching unicode character sets.'),
+      '#description' => $this->t('Enable if the string doesn\'t start with an alphanumeric or underscore character.'),
       '#required' => FALSE,
     ];
 
@@ -58,7 +58,7 @@ class AlinkForm extends EntityForm {
       '#title' => $this->t('Text'),
       '#maxlength' => 255,
       '#default_value' => $alink->text,
-      '#description' => $this->t('Text to replace with a link.'),
+      '#description' => $this->t('The text to automatically replace with this link.'),
       '#required' => TRUE,
     ];
 
@@ -66,26 +66,24 @@ class AlinkForm extends EntityForm {
       '#type' => 'checkbox',
       '#title' => $this->t('End Boundary'),
       '#default_value' => $alink->end_boundary,
-      '#description' => $this->t('Use an end boundary.'),
+      '#description' => $this->t('Enable if the string doesn\'t end with an alphanumeric or underscore character.'),
       '#required' => FALSE,
     ];
     
-    // Case_insensitive matching.
     $form['case_insensitive'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Case Insensitive'),
       '#default_value' => $alink->case_insensitive,
-      '#description' => $this->t('Case insensitive matching.'),
+      '#description' => $this->t('By default alinks are CaSe SeNsItIvE.'),
       '#required' => FALSE,
     ];
 
-    // The start boundary.
     $form['url'] = [
       '#type' => 'textfield',
       '#title' => $this->t('URL'),
       '#maxlength' => 255,
       '#default_value' => $alink->url,
-      '#description' => $this->t('The href of the link.'),
+      '#description' => $this->t('The href of the link. Internal (Drupal) links take the form "my/page"'),
       '#required' => TRUE,
     ];
 
@@ -102,7 +100,7 @@ class AlinkForm extends EntityForm {
       '#type' => 'checkbox',
       '#title' => $this->t('External Link'),
       '#default_value' => $alink->external,
-      '#description' => $this->t('Handle this as an external link'),
+      '#description' => $this->t('Check this if the link is to an external domain and be sure to include http:// in the link.'),
       '#required' => FALSE,
     ];
 
