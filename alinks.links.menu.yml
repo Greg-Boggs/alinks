@@ -1,10 +1,3 @@
-alinks.settings_form:
-  route_name: alinks.settings_form
-  title: 'Alinks'
-  description: 'Controls settings for the module Alinks'
-  parent: system.admin_config_content
-
-# Alink menu items definition
 entity.alink.collection:
   title: 'Alink'
   route_name: entity.alink.collection
