@@ -6,9 +6,9 @@ alinks.settings_form:
 
 # Alink menu items definition
 entity.alink.collection:
-  title: 'Alink'
+  title: 'Alinks'
   route_name: entity.alink.collection
-  description: 'List Alink (bundles)'
+  description: 'List Alinks'
   parent: system.admin_structure
   weight: 99
 

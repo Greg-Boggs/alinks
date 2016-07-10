@@ -48,7 +48,7 @@ class AlinkForm extends EntityForm {
     $form['start_boundary'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Start Boundary'),
-      '#default_value' => $alink->start_boundary,
+      '#default_value' => $alink->getStartBoundary(),
       '#description' => $this->t('Enable if the string doesn\'t start with an alphanumeric or underscore character.'),
       '#required' => FALSE,
     ];
@@ -57,7 +57,7 @@ class AlinkForm extends EntityForm {
       '#type' => 'textfield',
       '#title' => $this->t('Text'),
       '#maxlength' => 255,
-      '#default_value' => $alink->text,
+      '#default_value' => $alink->getText(),
       '#description' => $this->t('The text to automatically replace with this link.'),
       '#required' => TRUE,
     ];
@@ -65,7 +65,7 @@ class AlinkForm extends EntityForm {
     $form['end_boundary'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('End Boundary'),
-      '#default_value' => $alink->end_boundary,
+      '#default_value' => $alink->getEndBoundary(),
       '#description' => $this->t('Enable if the string doesn\'t end with an alphanumeric or underscore character.'),
       '#required' => FALSE,
     ];
@@ -73,7 +73,7 @@ class AlinkForm extends EntityForm {
     $form['case_insensitive'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Case Insensitive'),
-      '#default_value' => $alink->case_insensitive,
+      '#default_value' => $alink->getCaseIsensitive(),
       '#description' => $this->t('By default alinks are CaSe SeNsItIvE.'),
       '#required' => FALSE,
     ];
@@ -82,7 +82,7 @@ class AlinkForm extends EntityForm {
       '#type' => 'textfield',
       '#title' => $this->t('URL'),
       '#maxlength' => 255,
-      '#default_value' => $alink->url,
+      '#default_value' => $alink->getUrl(),
       '#description' => $this->t('The href of the link. Internal (Drupal) links take the form "my/page"'),
       '#required' => TRUE,
     ];
@@ -91,7 +91,7 @@ class AlinkForm extends EntityForm {
       '#type' => 'textfield',
       '#title' => $this->t('URL Title'),
       '#maxlength' => 255,
-      '#default_value' => $alink->url_title,
+      '#default_value' => $alink->getUrlTitle(),
       '#description' => $this->t('Title attribute of the URL.'),
       '#required' => FALSE,
     ];
@@ -99,7 +99,7 @@ class AlinkForm extends EntityForm {
     $form['external'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('External Link'),
-      '#default_value' => $alink->external,
+      '#default_value' => $alink->getExternal(),
       '#description' => $this->t('Check this if the link is to an external domain and be sure to include http:// in the link.'),
       '#required' => FALSE,
     ];
@@ -108,7 +108,7 @@ class AlinkForm extends EntityForm {
       '#type' => 'textfield',
       '#title' => $this->t('Link Class'),
       '#maxlength' => 255,
-      '#default_value' => $alink->class,
+      '#default_value' => $alink->getClass(),
       '#description' => $this->t('Add a class to the link.'),
       '#required' => FALSE,
     ];
@@ -116,7 +116,7 @@ class AlinkForm extends EntityForm {
     $form['weight'] = [
       '#type' => 'weight',
       '#title' => $this->t('Weight'),
-      '#default_value' => $alink->weight,
+      '#default_value' => $alink->getWeight(),
       '#description' => $this->t('The lowest weight alink wins when there are multiple matches.'),
       '#required' => TRUE,
     ];

@@ -3,7 +3,6 @@
 namespace Drupal\alinks\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityBase;
-use Drupal\Core\Config\Entity\ConfigEntityInterface;
 
 /**
  * Defines the Alink entity.
@@ -38,82 +37,145 @@ use Drupal\Core\Config\Entity\ConfigEntityInterface;
  *   }
  * )
  */
-class Alink extends ConfigEntityBase implements ConfigEntityInterface {
+class Alink extends ConfigEntityBase implements AlinkInterface {
 
   /**
    * The ID.
    *
    * @var string
    */
-  public $id;
+  protected $id;
 
   /**
    * The label.
    *
    * @var string
    */
-  public $label;
+  protected $label;
 
   /**
    * The start boundary.
    *
    * @var int
    */
-  public $start_boundary;
+  protected $start_boundary;
 
   /**
    * The link text.
    *
    * @var string
    */
-  public $text;
+  protected $text;
 
   /**
    * The end boundary.
    *
    * @var int
    */
-  public $end_boundary;
+  protected $end_boundary;
 
   /**
    * Case insensitive matching.
    *
    * @var int
    */
-  public $case_insensitive;
+  protected $case_insensitive;
 
   /**
    * The link url.
    *
    * @var string
    */
-  public $url;
+  protected $url;
 
   /**
    * The link title.
    *
    * @var string
    */
-  public $url_title;
+  protected $url_title;
 
   /**
    * Is external link.
    *
    * @var int
    */
-  public $external;
+  protected $external;
 
   /**
    * The link class.
    *
    * @var string
    */
-  public $class;
+  protected $class;
 
   /**
    * The link weight.
    *
    * @var int
    */
-  public $weight;
+  protected $weight;
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getStartBoundary() {
+    return $this->start_boundary;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getText() {
+    return $this->text;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getEndBoundary() {
+    return $this->end_boundary;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getCaseInsensitive() {
+    return $this->case_insensitive;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getUrl() {
+    return $this->url;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getUrlTitle() {
+    return $this->url_title;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getExternal() {
+    return $this->external;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getClass() {
+    return $this->class;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getWeight() {
+    return $this->weight;
+  }
 }
