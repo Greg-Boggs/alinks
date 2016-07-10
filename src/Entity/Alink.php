@@ -127,7 +127,7 @@ class Alink extends ConfigEntityBase implements AlinkInterface {
    * {@inheritdoc}
    */
   public function getText() {
-    return $this->text;
+    return trim(htmlspecialchars($this->text));
   }
 
   /**
