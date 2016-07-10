@@ -1,8 +1,14 @@
 <?php
 /**
  * @file
- * this module allows users to associates defined text to links
+ *
+ * This module allows users to associates defined text to links
  */
+
+
+use \Drupal\alinks\Entity\Alink;
+use \Drupal\node\NodeInterface;
+use \Drupal\Core\Link;
 
 /**
  * Implementation of hook_permission().
@@ -22,38 +28,36 @@ function alinks_permission() {
 /**
  * Implementation of hook_node_view().
  */
-function alinks_node_view(array &$build, \Drupal\node\NodeInterface $node, $view_mode, $langcode) {
+function alinks_node_view(array &$build, NodeInterface $node, $view_mode, $langcode) {
   $node_types = \Drupal::config('alinks.settings')->get('node_types');
   if (!is_array($node_types)) {
     return;
   }
-
   $node_types = in_array($node->getType(), $node_types, TRUE);
   if ($node_types) {
     $words = alinks_get_strings();
     if ($words) {
-      if (is_array($words) && !empty($words) && isset($node->content['body'][0]['#markup'])) {
-        $node->content['body'][0]['#markup'] = alinks_make_links($node->content['body'][0]['#markup'], $words);
+      if (is_array($words) && !empty($words) && isset($node->body)) {
+        $node->body->value = alinks_make_links($node->body->value, $words);
       }
     }
   }
 }
 
 /**
- * Get the strings we have to replace from the database
+ * Gets an array of all alinks.
+ *
+ * @return
+ *   Array of alinks
  */
 function alinks_get_strings() {
-  $alink = array();
-  $result = db_query("SELECT * FROM {alinks} ORDER BY alink_weight");
+  $alinks = Alink::loadMultiple();
 
-
-  if ($result->rowCount() > 0) {
-    foreach ($result as $alinks) {
-      $alink[$alinks->id] = $alinks;
-    }
+  foreach ($alinks as $name => $alink) {
+    $alinks[$name] = $alink;
   }
 
-  return $alink;
+  return $alinks;
 }
 
 /**
@@ -63,7 +67,8 @@ function alinks_make_links($body, $words) {
   if (is_array($words) && isset($body)) {
 
     // create the replacement array
-    $url = (drupal_lookup_path('alias', $_GET['q'])) ? drupal_lookup_path('alias', $_GET['q']) : $_GET['q'];
+    $path = $_GET['q'];
+    $url = \Drupal::service('path.alias_manager')->getAliasByPath('/' . $path);
     $i = 0;
     $title = 'alink_replaced\1alink_replaced';
     $alink_options = array();
