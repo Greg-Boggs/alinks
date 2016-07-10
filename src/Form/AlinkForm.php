@@ -24,7 +24,7 @@ class AlinkForm extends EntityForm {
 
     // Change page title for the edit operation
     if ($this->operation == 'edit') {
-      $form['#title'] = $this->t('Edit alink: @label', array('@label' => $alink->label));
+      $form['#title'] = $this->t('Edit alink: @label', array('@label' => $alink->label()));
     }
     $form['label'] = array(
       '#type' => 'textfield',
@@ -73,7 +73,7 @@ class AlinkForm extends EntityForm {
     $form['case_insensitive'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Case Insensitive'),
-      '#default_value' => $alink->getCaseIsensitive(),
+      '#default_value' => $alink->getCaseInsensitive(),
       '#description' => $this->t('By default alinks are CaSe SeNsItIvE.'),
       '#required' => FALSE,
     ];

@@ -15,7 +15,6 @@ class AlinkListBuilder extends ConfigEntityListBuilder {
    */
   public function buildHeader() {
     $header['label'] = $this->t('Label');
-    $header['id'] = $this->t('Machine name');
     $header['text'] = $this->t('Replaced Text');
     $header['url'] = $this->t('URL');
 
@@ -27,9 +26,8 @@ class AlinkListBuilder extends ConfigEntityListBuilder {
    */
   public function buildRow(EntityInterface $entity) {
     $row['label'] = $entity->label();
-    $row['id'] = $entity->id();
-    $row['text'] = $entity->text;
-    $row['url'] = $entity->url;
+    $row['text'] = $entity->getText();
+    $row['url'] = $entity->getUrl();
 
     return $row + parent::buildRow($entity);
   }

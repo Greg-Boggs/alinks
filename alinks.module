@@ -27,7 +27,7 @@ function alinks_permission() {
 }
 
 /**
- * Implementation of hook_node_view().
+ * Implements of hook_node_view().
  */
 function alinks_node_view(array &$build, NodeInterface $node, $view_mode, $langcode) {
   print_r('1');
