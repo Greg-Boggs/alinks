@@ -3,6 +3,7 @@
 namespace Drupal\alinks\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityBase;
+use Drupal\Core\Config\Entity\ConfigEntityInterface;
 
 /**
  * Defines the Alink entity.
@@ -37,21 +38,21 @@ use Drupal\Core\Config\Entity\ConfigEntityBase;
  *   }
  * )
  */
-class Alink extends ConfigEntityBase implements AlinkInterface {
+class Alink extends ConfigEntityBase implements ConfigEntityInterface {
 
   /**
    * The ID.
    *
    * @var string
    */
-  protected $id;
+  public $id;
 
   /**
    * The label.
    *
    * @var string
    */
-  protected $label;
+  public $label;
 
   /**
    * The start boundary.
