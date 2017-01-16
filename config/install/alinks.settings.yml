@@ -1,1 +1,5 @@
-limit: 1
+displays:
+  -
+    entity_type: node
+    entity_bundle: article
+    entity_display: full

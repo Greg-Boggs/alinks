@@ -1,7 +1,13 @@
-entity.alink.collection:
-  title: 'Alinks'
-  route_name: entity.alink.collection
-  description: 'List Alinks'
-  parent: system.admin_structure
-  weight: 99
+# Keyword menu items definition
+entity.alink_keyword.collection:
+  title: 'Keywords'
+  route_name: entity.alink_keyword.collection
+  description: 'List Keyword entities'
+  parent: system.admin_content
+  weight: 100
 
+alink_keyword.admin.structure.settings:
+  title: 'Alinks'
+  description: 'Configure alinks keywords'
+  route_name: alink_keyword.settings
+  parent: system.admin_config_content

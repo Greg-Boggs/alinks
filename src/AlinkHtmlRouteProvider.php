@@ -7,12 +7,12 @@ use Drupal\Core\Entity\Routing\AdminHtmlRouteProvider;
 use Symfony\Component\Routing\Route;
 
 /**
- * Provides routes for Alink entities.
+ * Provides routes for Keyword entities.
  *
  * @see Drupal\Core\Entity\Routing\AdminHtmlRouteProvider
  * @see Drupal\Core\Entity\Routing\DefaultHtmlRouteProvider
  */
-class AlinkHtmlRouteProvider extends AdminHtmlRouteProvider {
+class KeywordHtmlRouteProvider extends AdminHtmlRouteProvider {
 
   /**
    * {@inheritdoc}
@@ -26,8 +26,8 @@ class AlinkHtmlRouteProvider extends AdminHtmlRouteProvider {
       $collection->add("entity.{$entity_type_id}.collection", $collection_route);
     }
 
-    if ($add_form_route = $this->getAddFormRoute($entity_type)) {
-      $collection->add("entity.{$entity_type_id}.add_form", $add_form_route);
+    if ($settings_form_route = $this->getSettingsFormRoute($entity_type)) {
+      $collection->add("$entity_type_id.settings", $settings_form_route);
     }
 
     return $collection;
@@ -49,11 +49,9 @@ class AlinkHtmlRouteProvider extends AdminHtmlRouteProvider {
       $route
         ->setDefaults([
           '_entity_list' => $entity_type_id,
-          // Make sure this is not a TranslatableMarkup object as the
-          // TitleResolver translates this string again.
-          '_title' => (string) $entity_type->getLabel(),
+          '_title' => "{$entity_type->getLabel()} list",
         ])
-        ->setRequirement('_permission', $entity_type->getAdminPermission())
+        ->setRequirement('_permission', 'access keyword overview')
         ->setOption('_admin_route', TRUE);
 
       return $route;
@@ -61,7 +59,7 @@ class AlinkHtmlRouteProvider extends AdminHtmlRouteProvider {
   }
 
   /**
-   * Gets the add-form route.
+   * Gets the settings form route.
    *
    * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
    *   The entity type.
@@ -69,24 +67,15 @@ class AlinkHtmlRouteProvider extends AdminHtmlRouteProvider {
    * @return \Symfony\Component\Routing\Route|null
    *   The generated route, if available.
    */
-  protected function getAddFormRoute(EntityTypeInterface $entity_type) {
-    if ($entity_type->hasLinkTemplate('add-form')) {
-      $entity_type_id = $entity_type->id();
-      $route = new Route($entity_type->getLinkTemplate('add-form'));
-      // Use the add form handler, if available, otherwise default.
-      $operation = 'default';
-      if ($entity_type->getFormClass('add')) {
-        $operation = 'add';
-      }
+  protected function getSettingsFormRoute(EntityTypeInterface $entity_type) {
+    if (!$entity_type->getBundleEntityType()) {
+      $route = new Route("/admin/config/content/alinks");
       $route
         ->setDefaults([
-          '_entity_form' => "{$entity_type_id}.{$operation}",
-          '_title' => "Add {$entity_type->getLabel()}",
+          '_form' => 'Drupal\alinks\Form\KeywordSettingsForm',
+          '_title' => "Alinks settings",
         ])
-        ->setRequirement('_entity_create_access', $entity_type_id)
-        ->setOption('parameters', [
-          $entity_type_id => ['type' => 'entity:' . $entity_type_id],
-        ])
+        ->setRequirement('_permission', $entity_type->getAdminPermission())
         ->setOption('_admin_route', TRUE);
 
       return $route;
