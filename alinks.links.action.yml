@@ -1,6 +1,5 @@
-entity.alink.add_form:
-  route_name: 'entity.alink.add_form'
-  title: 'Add Alink'
+entity.alink_keyword.add_form:
+  route_name: entity.alink_keyword.add_form
+  title: 'Add Keyword'
   appears_on:
-    - entity.alink.collection
-
+    - entity.alink_keyword.collection
