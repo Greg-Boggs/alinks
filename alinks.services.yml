@@ -1,3 +1,5 @@
 services:
   alinks.replacer:
     class: Drupal\alinks\AlinkPostRenderer
+    arguments:
+      - ''
