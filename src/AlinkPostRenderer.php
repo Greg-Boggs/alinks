@@ -188,7 +188,7 @@ class AlinkPostRenderer {
   }
 
   public static function postRender($content, $context) {
-    $selector = "//*//p//text()[not(ancestor::a) and not(ancestor::script) and not(ancestor::*[@data-alink-ignore])]";
+    $selector = \Drupal::config('alinks.settings')->get('xpathSelector');
     $renderer = new static($content, $context, $selector);
     return $renderer->replace();
   }
