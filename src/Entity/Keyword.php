@@ -20,6 +20,7 @@ use Drupal\user\UserInterface;
  *   label = @Translation("Keyword"),
  *   handlers = {
  *     "view_builder" = "Drupal\Core\Entity\EntityViewBuilder",
+ *     "views_data" = "Drupal\alinks\Entity\KeywordViewsData",
  *     "list_builder" = "Drupal\alinks\KeywordListBuilder",
  *     "translation" = "Drupal\content_translation\ContentTranslationHandler",
  *     "form" = {
