@@ -22,7 +22,7 @@ class AlinkPostRenderer {
   /**
    * Stemmer.
    *
-   * @var \Wamania\Snowball\Stem $stemmer
+   * @var \Wamania\Snowball\Stem
    */
   protected $stemmer;
 
@@ -32,6 +32,7 @@ class AlinkPostRenderer {
 
   /**
    * AlinkPostRenderer constructor.
+   *
    * @param $content
    * @param $context
    * @param null $xpathSelector
@@ -65,7 +66,6 @@ class AlinkPostRenderer {
         ->condition('status', 1)
         ->execute();
       $this->keywords = Keyword::loadMultiple($ids);
-
 
       $vocabularies = \Drupal::config('alinks.settings')->get('vocabularies');
 
@@ -103,6 +103,9 @@ class AlinkPostRenderer {
     }
   }
 
+  /**
+   *
+   */
   public function replace() {
     $dom = Html::load($this->content);
     $xpath = new \DOMXPath($dom);
@@ -136,6 +139,9 @@ class AlinkPostRenderer {
     return Html::serialize($dom);
   }
 
+  /**
+   *
+   */
   protected function processDomNodeList($element) {
     foreach ($element as $item) {
       if ($item instanceof \DOMElement) {
@@ -154,6 +160,9 @@ class AlinkPostRenderer {
     return $element;
   }
 
+  /**
+   *
+   */
   protected function replaceAll(Keyword $search, $replace, $subject, &$count = 0) {
     $subject = str_replace($search->getText(), $replace, $subject, $count);
     if ($count == 0) {
@@ -162,6 +171,9 @@ class AlinkPostRenderer {
     return $subject;
   }
 
+  /**
+   *
+   */
   protected function replaceFirst(Keyword $search, $replace, $subject, &$count = 0) {
     $search_escaped = preg_quote($search->getText(), '/');
     $subject = preg_replace('/\b' . $search_escaped . '\b/u', $replace, $subject, 1, $count);
@@ -187,6 +199,9 @@ class AlinkPostRenderer {
     return $subject;
   }
 
+  /**
+   *
+   */
   public static function postRender($content, $context) {
     $selector = \Drupal::config('alinks.settings')->get('xpathSelector');
     $renderer = new static($content, $context, $selector);
@@ -223,13 +238,17 @@ class AlinkPostRenderer {
       try {
         $uri = $this->normalizeUri($link->getAttribute('href'));
         $links[] = Url::fromUri($uri)->toString();
-      } catch (\Exception $exception) {
+      }
+      catch (\Exception $exception) {
         // Do nothing.
       }
     }
     return array_flip(array_unique($links));
   }
 
+  /**
+   *
+   */
   protected function addExistingLink(Keyword $word) {
     $this->existingLinks[$word->getUrl()] = TRUE;
     $this->keywords = array_filter($this->keywords, function ($keyword) use ($word) {

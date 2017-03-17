@@ -40,6 +40,9 @@ class AlinkPostRendererTest extends KernelTestBase {
     $this->assertEquals($expected, $renderer->replace());
   }
 
+  /**
+   *
+   */
   public function replaceProvider() {
     $data = [];
 
@@ -93,7 +96,7 @@ class AlinkPostRendererTest extends KernelTestBase {
       '<blockquote><p><a href="/example">Foobar</a></p></blockquote>',
     ];
 
-    // Test Stemming
+    // Test Stemming.
     // @see http://snowball.tartarus.org/algorithms/german/stemmer.html
     $data[] = [
       '<p>Ich habe eine Katze.</p>',
@@ -107,10 +110,10 @@ class AlinkPostRendererTest extends KernelTestBase {
 
     /*
     $data[] = [
-      '<p>Kätzchen die Verkleinerungsform für Katze.</p>',
-      '<p><a href="/cat">Kätzchen</a> ist die Verkleinerungsform für Katze.</p>',
+    '<p>Kätzchen die Verkleinerungsform für Katze.</p>',
+    '<p><a href="/cat">Kätzchen</a> ist die Verkleinerungsform für Katze.</p>',
     ];
-    */
+     */
 
     $data[] = [
       '<p>Weidenkätzchen</p>',

@@ -1,7 +1,7 @@
 Usage Directions:
 
 Step 1:
-Configure an input filter (admin/config/content/alinks) to enable replacements 
+Configure an input filter (admin/config/content/alinks) to enable replacements
 per format and set a replacement limit.
 
 Step 2:

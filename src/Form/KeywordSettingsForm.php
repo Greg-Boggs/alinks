@@ -71,7 +71,6 @@ class KeywordSettingsForm extends ConfigFormBase {
         ->getEditable('alinks.settings')
         ->get('displays');
 
-
       $displays[] = [
         'entity_type' => $form_state->getValue('entityType'),
         'entity_bundle' => $form_state->getValue('entityBundle'),
@@ -143,6 +142,7 @@ class KeywordSettingsForm extends ConfigFormBase {
    *
    * @param array $form
    * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *
    * @return mixed
    */
   public function populateEntitySettings(array &$form, FormStateInterface $form_state) {
@@ -244,7 +244,6 @@ class KeywordSettingsForm extends ConfigFormBase {
   protected function buildTable(FormStateInterface $form_state) {
 
     $form = [];
-
 
     $form['display_table'] = array(
       '#type' => 'table',

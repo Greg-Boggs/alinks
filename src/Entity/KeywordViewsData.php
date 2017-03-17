@@ -9,6 +9,7 @@ use Drupal\views\EntityViewsDataInterface;
  * Provides Views data for keyword entities.
  */
 class KeywordViewsData extends EntityViewsData implements EntityViewsDataInterface {
+
   /**
    * {@inheritdoc}
    */
