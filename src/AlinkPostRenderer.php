@@ -33,14 +33,16 @@ class AlinkPostRenderer {
   /**
    * AlinkPostRenderer constructor.
    *
-   * @param $content
-   * @param $context
+   * @param \Drupal\Core\Render\Markup $content
+   *    The content of the current page.
+   * @param array $context
+   *    The current page context.
    * @param null $xpathSelector
+   *    The selector rule for the html.
    */
   public function __construct($content, $context = NULL, $xpathSelector = NULL) {
 
     if (!empty($context['#entity_type']) && !empty($context['#' . $context['#entity_type']])) {
-      /** @var \Drupal\Core\Entity\ContentEntityInterface $entity */
       $entity = $context['#' . $context['#entity_type']];
       $class = 'Wamania\Snowball\\' . $entity->language()->getName();
       if (class_exists($class)) {
