@@ -17,3 +17,6 @@ alinks.settings:
           entity_display:
             label: 'Display'
             type: string
+    xpathSelector:
+      type: string
+      label: 'xpath selector string'
