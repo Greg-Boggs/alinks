@@ -60,7 +60,10 @@ class AlinkPostRenderer {
   }
 
   /**
+   * Load alinks keywords.
+   *
    * @return \Drupal\alinks\Entity\Keyword[]
+   *   Returns a list of all of the alinks keywords.
    */
   protected function getKeywords() {
     if ($this->keywords === NULL) {
@@ -76,7 +79,6 @@ class AlinkPostRenderer {
           ->condition('vid', $vocabularies, 'IN')
           ->execute();
 
-        /** @var Term[] $terms */
         $terms = Term::loadMultiple($terms);
         foreach ($terms as $term) {
           $this->keywords[] = Keyword::create([
@@ -96,7 +98,10 @@ class AlinkPostRenderer {
   }
 
   /**
+   * Set keywords and stemmed keywords.
+   *
    * @param mixed $keywords
+   *    A list of all of the keywords to set.
    */
   public function setKeywords($keywords) {
     $this->keywords = $keywords;
@@ -106,14 +111,13 @@ class AlinkPostRenderer {
   }
 
   /**
-   *
+   * Load the content and replace the matched strings with automatic links.
    */
   public function replace() {
     $dom = Html::load($this->content);
     $xpath = new \DOMXPath($dom);
 
     $this->existingLinks = $this->extractExistingLinks($xpath);
-    /** @var Keyword[] $words */
     $this->keywords = array_filter($this->getKeywords(), function (Keyword $word) {
       return !isset($this->existingLinks[$word->getUrl()]);
     });
@@ -125,6 +129,7 @@ class AlinkPostRenderer {
         continue;
       }
       foreach ($this->keywords as $key => $word) {
+
         // @TODO: Make it configurable replaceAll vs. replaceFirst
         $text = $this->replaceFirst($word, '<a href="' . $word->getUrl() . '">' . $word->getText() . '</a>', $text, $count);
         if ($count) {
@@ -142,7 +147,7 @@ class AlinkPostRenderer {
   }
 
   /**
-   *
+   * Process the node list to replace links.
    */
   protected function processDomNodeList($element) {
     foreach ($element as $item) {
@@ -151,6 +156,7 @@ class AlinkPostRenderer {
           foreach ($item->childNodes as $childNode) {
             if ($childNode instanceof \DOMText) {
               foreach ($this->getKeywords() as $word) {
+
                 // @TODO: Make it configurable replaceAll vs. replaceFirst
                 $childNode->nodeValue = $this->replaceFirst($word, '<a href="' . $word->getUrl() . '">' . $word->getText() . '</a>', $childNode->nodeValue);
               }
@@ -159,6 +165,7 @@ class AlinkPostRenderer {
         }
       }
     }
+
     return $element;
   }
 
@@ -174,12 +181,13 @@ class AlinkPostRenderer {
   }
 
   /**
-   *
+   * Uses regular expression to replace the first matched keyword in content.
    */
   protected function replaceFirst(Keyword $search, $replace, $subject, &$count = 0) {
     $search_escaped = preg_quote($search->getText(), '/');
     $subject = preg_replace('/\b' . $search_escaped . '\b/u', $replace, $subject, 1, $count);
     if ($count == 0) {
+
       // @TODO: Look at Search API Tokenizer & Highlighter
       $terms = str_replace(['.', ',', ';', '!', '?'], '', $subject);
       $terms = explode(' ', $terms);
@@ -198,6 +206,7 @@ class AlinkPostRenderer {
         }
       }
     }
+
     return $subject;
   }
 
@@ -207,16 +216,24 @@ class AlinkPostRenderer {
   public static function postRender($content, $context) {
     $selector = \Drupal::config('alinks.settings')->get('xpathSelector');
     $renderer = new static($content, $context, $selector);
+
     return $renderer->replace();
   }
 
   /**
-   * @param $uri
+   * Normalize the URLs with front links and internal links.
+   *
+   * @param string $uri
+   *   A url to be normalized.
+   *
    * @return string
+   *    The normalized URL.
    */
   protected function normalizeUri($uri) {
+
     // If we already have a scheme, we're fine.
     if (empty($uri) || !is_null(parse_url($uri, PHP_URL_SCHEME))) {
+
       return $uri;
     }
 
@@ -230,12 +247,19 @@ class AlinkPostRenderer {
   }
 
   /**
-   * @param $xpath
+   * Extract all of the links in an xpath query.
+   *
+   * @param string $xpath
+   *   An xpath match to parse for links.
+   *
    * @return array
+   *    Unique links from an xpath.
    */
   protected function extractExistingLinks($xpath) {
+
     // @TODO: Remove keywords with links which are already in the text
     $links = [];
+
     foreach ($xpath->query('//a') as $link) {
       try {
         $uri = $this->normalizeUri($link->getAttribute('href'));
@@ -245,21 +269,25 @@ class AlinkPostRenderer {
         // Do nothing.
       }
     }
+
     return array_flip(array_unique($links));
   }
 
   /**
-   *
+   * Check to see if keywords on this object match the passed word.
    */
   protected function addExistingLink(Keyword $word) {
     $this->existingLinks[$word->getUrl()] = TRUE;
     $this->keywords = array_filter($this->keywords, function ($keyword) use ($word) {
       if ($keyword->getText() == $word->getText()) {
+
         return FALSE;
       }
       if ($keyword->getUrl() == $word->getUrl()) {
+
         return FALSE;
       }
+
       return TRUE;
     });
   }
@@ -274,6 +302,7 @@ class AlinkPostRenderer {
    */
   protected function replaceNodeContent(\DOMNode &$node, $content) {
     if (strlen($content)) {
+
       // Load the content into a new DOMDocument and retrieve the DOM nodes.
       $replacement_nodes = Html::load($content)->getElementsByTagName('body')
         ->item(0)
@@ -284,6 +313,7 @@ class AlinkPostRenderer {
     }
 
     foreach ($replacement_nodes as $replacement_node) {
+
       // Import the replacement node from the new DOMDocument into the original
       // one, importing also the child nodes of the replacement node.
       $replacement_node = $node->ownerDocument->importNode($replacement_node, TRUE);
