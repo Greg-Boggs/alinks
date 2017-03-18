@@ -273,8 +273,12 @@ class AlinkPostRenderer {
     return array_flip(array_unique($links));
   }
 
+
   /**
    * Check to see if keywords on this object match the passed word.
+   *
+   * @param \Drupal\alinks\Entity\Keyword $word
+   *   An individual keyword.
    */
   protected function addExistingLink(Keyword $word) {
     $this->existingLinks[$word->getUrl()] = TRUE;
