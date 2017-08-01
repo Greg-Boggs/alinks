@@ -278,7 +278,7 @@ class KeywordSettingsForm extends ConfigFormBase {
         '#links' => array(
           'delete' => array(
             'title' => t('Delete'),
-            'url' => Url::fromRoute('alinks.alinks_controller_delete', array('id' => $key)),
+            'url' => Url::fromRoute('alinks.alinks_controller_delete', $display)
           ),
         ),
       );

@@ -3,30 +3,30 @@
 namespace Drupal\alinks\Controller;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
+use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
- * Class AlinksController.
- *
- * @package Drupal\alinks\Controller
+ * Returns responses for alinks configuration routes.
  */
-class AlinksController extends ControllerBase {
-
-  protected $requestStack;
+class AlinksController implements ContainerInjectionInterface {
 
   /**
-   * AlinksController constructor.
+   * The configuration factory.
    *
-   * @param \Symfony\Component\HttpFoundation\RequestStack $requestStack
-   * @param \Drupal\Core\Config\ConfigFactoryInterface $configFactory
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
-  public function __construct(RequestStack $requestStack, ConfigFactoryInterface $configFactory) {
+  protected $configFactory;
 
-    $this->requestStack = $requestStack;
-
+  /**
+   * Constructs a new controller.
+   *
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $configFactory
+   *   The configuration factory.
+   */
+  public function __construct(ConfigFactoryInterface $configFactory) {
     $this->configFactory = $configFactory;
   }
 
@@ -35,31 +35,23 @@ class AlinksController extends ControllerBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('request_stack'),
       $container->get('config.factory')
     );
   }
 
   /**
-   * Deletes a AccessToken.
+   * Remove the given entity type, bundle and display from alinks configuration.
    *
-   * @return RedirectResponse
-   *   Returns to previous page.
+   * @return \Symfony\Component\HttpFoundation\RedirectResponse
+   *   Return a redirect to the alinks settings page.
    */
-  public function delete($id) {
-
-    $displays = $this->configFactory->getEditable('alinks.settings')
-      ->get('displays');
-
-    unset($displays[$id]);
-
-    $this->configFactory->getEditable('alinks.settings')
-      ->set('displays', $displays)
-      ->save();
-
-    $previousUrl = $this->requestStack->getCurrentRequest()->server->get('HTTP_REFERER');
-
-    return new RedirectResponse($previousUrl);
+  public function delete($entity_type, $entity_bundle, $entity_display) {
+    $config = $this->configFactory->getEditable('alinks.settings');
+    $displays = array_values(array_filter($config->get('displays'), function ($display) use ($entity_type, $entity_bundle, $entity_display) {
+      return !($display['entity_type'] == $entity_type && $display['entity_bundle'] == $entity_bundle && $display['entity_display'] == $entity_display);
+    }));
+    $config->set('displays', $displays)->save();
+    return new RedirectResponse(Url::fromRoute('alink_keyword.settings')->setAbsolute()->toString());
   }
 
 }
